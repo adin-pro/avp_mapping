@@ -1,0 +1,18 @@
+/*
+ * @Author: ding.yin
+ * @Date: 2022-09-30 11:14:45
+ * @Last Modified by: ding.yin
+ * @Last Modified time: 2022-10-02 21:24:15
+ */
+#ifndef _GLOBAL_DEFINATION_H_H_
+#define _GLOBAL_DEFINATION_H_H_
+
+#include <string>
+
+namespace avp_mapping {
+
+const std::string WORK_SPACE_PATH = "@WORK_SPACE_PATH@";
+
+} // namespace avp_mapping
+
+#endif // _GLOBAL_DEFINATION_H_H_
