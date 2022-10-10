@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-05 16:41:11
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-05 16:47:14
+ * @Last Modified time: 2022-10-10 11:00:05
  */
 
 #ifndef _KEY_FRAMES_SUBSCRIBER_H_
@@ -25,11 +25,10 @@ public:
   KeyFramesSubscriber() = default;
   KeyFramesSubscriber(ros::NodeHandle &nh, std::string topic_name,
                       size_t buff_size);
-  void parseData(std::deque<KeyFrame> deque_key_frames);
+  void parseData(std::deque<KeyFrame>& deque_key_frames);
 
 private:
-  void
-  msg_callback(const geometry_msgs::PoseStampedConstPtr &key_frames_msg_ptr);
+  void msg_callback(const nav_msgs::Path::ConstPtr &key_frames_msg_ptr);
 
 private:
   ros::NodeHandle nh_;

@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-05 16:31:27
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-05 16:36:45
+ * @Last Modified time: 2022-10-08 19:32:27
  */
 
 #ifndef _KEY_FRAME_SUBSCRIBER_H_
@@ -28,7 +28,7 @@ public:
 
 private:
   void msg_callback(
-      const geometry_msgs::PoseWithCovarianceConstPtr &key_frame_msg_ptr);
+      const geometry_msgs::PoseWithCovarianceStampedConstPtr &key_frame_msg_ptr);
 
 private:
   std::deque<KeyFrame> latest_deque_key_frame_;

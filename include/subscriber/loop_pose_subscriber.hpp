@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-05 16:47:54
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-05 16:56:35
+ * @Last Modified time: 2022-10-10 11:14:37
  */
 #ifndef _LOOP_POSE_SUBSCRIBER_H_
 #define _LOOP_POSE_SUBSCRIBER_H_
@@ -27,7 +27,7 @@ public:
 
 private:
   void msg_callback(
-      const geometry_msgs::PoseWithCovarianceConstPtr &loop_pose_msg_ptr);
+      const geometry_msgs::PoseWithCovarianceStampedConstPtr &loop_pose_msg_ptr);
 
 private:
   ros::NodeHandle nh_;
