@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-15 10:54:38
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-15 11:00:42
+ * @Last Modified time: 2022-10-15 16:39:16
  */
 #ifndef _NDT_REGISTRATION_H_
 #define _NDT_REGISTRATION_H_
@@ -13,11 +13,11 @@
 
 namespace avp_mapping {
 
-class NDTRegistation : public RegistrationInterface {
+class NDTRegistration : public RegistrationInterface {
 
 public:
-  NDTRegistation(const YAML::Node &node);
-  NDTRegistation(float res, float step_size, float trans_eps, int max_iter);
+  NDTRegistration(const YAML::Node &node);
+  NDTRegistration(float res, float step_size, float trans_eps, int max_iter);
 
   bool setInputTarget(const CloudData::CLOUD_PTR &taget_ptr) override;
   bool scanMatch(const CloudData::CLOUD_PTR &input_source,
