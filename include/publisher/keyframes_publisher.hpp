@@ -2,17 +2,18 @@
  * @Author: ding.yin
  * @Date: 2022-10-05 19:41:03
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-05 19:43:56
+ * @Last Modified time: 2022-10-10 16:32:59
  */
 #ifndef _KEYFRAMES_PUBLISHER_H_
 #define _KEYFRAMES_PUBLISHER_H_
 
 #include <string>
+#include <deque>
 
 #include <geometry_msgs/PoseStamped.h>
 #include <ros/ros.h>
-
-#include <sensor_data/pose_data.hpp>
+#include "nav_msgs/Path.h"
+#include "sensor_data/key_frame.hpp"
 
 namespace avp_mapping {
 class KeyFramesPublisher {
@@ -21,7 +22,7 @@ class KeyFramesPublisher {
   KeyFramesPublisher(ros::NodeHandle &nh, std::string topic_name,
                      std::string frame_id, size_t buff_size);
 
-  void publish(PoseData &pose_data);
+  void publish(const std::deque<KeyFrame>& kfs);
 
   bool hasSubscriber();
 

@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-05 18:50:18
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-05 18:56:08
+ * @Last Modified time: 2022-10-10 15:26:40
  */
 #ifndef _CLOUD_PUBLISHER_H_
 #define _CLOUD_PUBLISHER_H_
@@ -21,7 +21,7 @@ public:
   CloudPublisher(ros::NodeHandle &nh, std::string topic_name,
                  std::string frame_id, size_t buff_size);
 
-  void publish(CloudData::CLOUD_PTR &cloud_data_input, ros::Time time);
+  void publish(CloudData::CLOUD_PTR &cloud_data_input, double time);
   void publish(CloudData::CLOUD_PTR &cloud_data_input);
 
   bool hasSubscribers();

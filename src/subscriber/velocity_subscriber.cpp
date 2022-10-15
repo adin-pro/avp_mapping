@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-10 11:28:17
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-10 11:37:13
+ * @Last Modified time: 2022-10-10 15:21:37
  */
 
 #include "subscriber/velocity_subscriber.hpp"
@@ -37,7 +37,7 @@ void VelocitySubscriber::parseData(std::deque<VelocityData> &velo_buff) {
   if (latest_velocity_data_.size() > 0) {
     velo_buff.insert(velo_buff.end(), latest_velocity_data_.begin(),
                      latest_velocity_data_.end());
-    latest_velocity_data_.clear()
+    latest_velocity_data_.clear();
   }
 }
 
