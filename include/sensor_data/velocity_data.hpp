@@ -1,14 +1,8 @@
 /*
- * @Description: velocity 数据
  * @Author: Ren Qian
  * @Date: 2019-07-17 18:27:40
- */
-
-/*
- * @Author: ding.yin
- * @Date: 2022-10-02 20:20:35
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-02 20:21:09
+ * @Last Modified time: 2022-10-17 15:35:39
  */
 
 #ifndef _VELOCITY_DATA_H_

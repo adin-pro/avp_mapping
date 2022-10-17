@@ -1,8 +1,8 @@
 /*
- * @Author: ding.yin
- * @Date: 2022-10-05 18:50:18
+ * @Author: Ren Qian
+ * @Date: 2020-02-05 02:27:30
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-10 15:26:40
+ * @Last Modified time: 2022-10-17 15:40:21
  */
 #ifndef _CLOUD_PUBLISHER_H_
 #define _CLOUD_PUBLISHER_H_

@@ -1,13 +1,8 @@
 /*
- * @Author: ding.yin
- * @Date: 2022-10-02 20:24:36
- * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-02 21:55:53
- */
-/*
- * @Description:
  * @Author: Ren Qian
- * @Date: 2019-07-17 18:27:40
+ * @Date: 2020-02-28 19:13:26
+ * @Last Modified by: ding.yin
+ * @Last Modified time: 2022-10-17 15:34:38
  */
 
 #ifndef _IMU_DATA_H_

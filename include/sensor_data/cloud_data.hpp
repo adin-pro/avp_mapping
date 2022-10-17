@@ -1,13 +1,8 @@
 /*
- * @Author: ding.yin
- * @Date: 2022-10-02 20:34:31
- * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-03 09:14:25
- */
-/*
- * @Description:
  * @Author: Ren Qian
- * @Date: 2019-07-17 18:17:49
+ * @Date: 2020-02-28 19:13:26
+ * @Last Modified by: ding.yin
+ * @Last Modified time: 2022-10-17 15:40:48
  */
 #ifndef _CLOUD_DATA_H_
 #define _CLOUD_DATA_H_

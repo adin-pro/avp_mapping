@@ -21,6 +21,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   std_srvs
+  cv_bridge
+  image_transport
   tf
 )
 
@@ -30,7 +32,6 @@ include(cmake/glog.cmake)
 include(cmake/YAML.cmake)
 include(cmake/PCL.cmake)
 include(cmake/eigen.cmake)
-#include(cmake/geographic.cmake)
 include(cmake/g2o.cmake)
 include(cmake/opencv.cmake)
 
@@ -43,6 +44,8 @@ include(cmake/global_defination.cmake)
 file(GLOB_RECURSE ALL_SRCS "*.cpp")
 file(GLOB_RECURSE NODE_SRCS "src/apps/*_node.cpp")
 list(REMOVE_ITEM ALL_SRCS ${NODE_SRCS})
+
+# message(STATUS "ALL_SRCS = ${ALL_SRCS}")
 
 add_executable(avp_data_pretreat_node src/apps/avp_data_pretreat_node.cpp ${ALL_SRCS})
 add_dependencies(avp_data_pretreat_node ${catkin_EXPORTED_TARGETS})

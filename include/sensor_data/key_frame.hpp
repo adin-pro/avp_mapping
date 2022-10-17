@@ -1,13 +1,8 @@
 /*
- * @Author: ding.yin
- * @Date: 2022-10-02 20:23:36
- * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-02 21:19:50
- */
-/*
- * @Description: 关键帧，在各个模块之间传递数据
  * @Author: Ren Qian
  * @Date: 2020-02-28 19:13:26
+ * @Last Modified by: ding.yin
+ * @Last Modified time: 2022-10-17 15:34:53
  */
 
 #ifndef _KEY_FRAME_H_

@@ -1,8 +1,8 @@
 /*
- * @Author: ding.yin
- * @Date: 2022-10-05 16:47:54
+ * @Author: Ren Qian
+ * @Date: 2019-08-19 19:22:17
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-10 11:14:37
+ * @Last Modified time: 2022-10-17 15:42:31
  */
 #ifndef _LOOP_POSE_SUBSCRIBER_H_
 #define _LOOP_POSE_SUBSCRIBER_H_

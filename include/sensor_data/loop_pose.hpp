@@ -1,14 +1,8 @@
 /*
  * @Author: ding.yin
- * @Date: 2022-10-02 20:23:11
- * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-02 21:19:42
- */
-
-/*
- * @Description: 关键帧之间的相对位姿，用于闭环检测
- * @Author: Ren Qian
  * @Date: 2020-02-28 19:13:26
+ * @Last Modified by: ding.yin
+ * @Last Modified time: 2022-10-17 15:35:03
  */
 
 #ifndef _LOOP_POSE_H_
