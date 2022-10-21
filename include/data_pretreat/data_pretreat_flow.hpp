@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-02 14:23:54
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 15:40:59
+ * @Last Modified time: 2022-10-17 20:36:57
  */
 #ifndef _DATA_PRETREAT_FLOW_H_
 #define _DATA_PRETREAT_FLOW_H_
@@ -21,6 +21,9 @@
 #include "publisher/cloud_publisher.hpp"
 #include "publisher/image_publisher.hpp"
 #include "publisher/tf_broadcaster.hpp"
+
+#include "models/camera/camera_model.hpp"
+#include "models/cloud_filter/cloud_filter_interface.hpp"
 
 namespace avp_mapping {
 
@@ -50,12 +53,12 @@ private:
   std::shared_ptr<OdometrySubscriber> odom_sub_ptr_;
   std::shared_ptr<IMUSubscriber> imu_sub_ptr_;
   // tf listener
-  std::shared_ptr<TFListener> camera0_to_base_ptr_;
-  std::shared_ptr<TFListener> camera1_to_base_ptr_;
-  std::shared_ptr<TFListener> camera2_to_base_ptr_;
-  std::shared_ptr<TFListener> camera3_to_base_ptr_;
-  std::shared_ptr<TFListener> camera4_to_base_ptr_;
-  std::shared_ptr<TFListener> camera5_to_base_ptr_;
+  std::shared_ptr<TFListener> base_to_camera0_ptr_;
+  std::shared_ptr<TFListener> base_to_camera1_ptr_;
+  std::shared_ptr<TFListener> base_to_camera2_ptr_;
+  std::shared_ptr<TFListener> base_to_camera3_ptr_;
+  std::shared_ptr<TFListener> base_to_camera4_ptr_;
+  std::shared_ptr<TFListener> base_to_camera5_ptr_;
 
   // publisher
   std::shared_ptr<CloudPublisher> cloud_pub_ptr_;
@@ -81,12 +84,16 @@ private:
   PoseData cur_odom_;
 
   // extrinsic matrix
-  Eigen::Matrix4f camera0_to_base_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f camera1_to_base_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f camera2_to_base_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f camera3_to_base_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f camera4_to_base_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f camera5_to_base_ = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f base_to_camera0_ = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f base_to_camera1_ = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f base_to_camera2_ = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f base_to_camera3_ = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f base_to_camera4_ = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4f base_to_camera5_ = Eigen::Matrix4f::Identity();
+
+  CameraModel camera_;
+
+  std::shared_ptr<CloudFilterInterface> filter_ptr_;
 };
 
 } // namespace avp_mapping

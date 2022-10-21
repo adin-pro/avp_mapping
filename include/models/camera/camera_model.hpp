@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-17 10:41:43
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 19:24:30
+ * @Last Modified time: 2022-10-17 20:43:33
  */
 #ifndef _CAMERA_MODEL_H_
 #define _CAMERA_MODEL_H_
@@ -20,6 +20,8 @@ namespace avp_mapping {
 class CameraModel {
 
 public:
+  CameraModel() = default;
+
   CameraModel(YAML::Node &node);
 
   CameraModel(float fx, float fy, float cx, float cy);
@@ -29,7 +31,9 @@ public:
                     Eigen::Matrix4f &camera_to_base);
 
   bool img2BevImage(ImageData &img_input, ImageData &img_output,
-                    Eigen::Matrix4f &camera_to_base, float scale);
+                    Eigen::Matrix4f &base2cam, float scale);
+
+  Eigen::Matrix3f getIntrinsic();
 
 private:
   bool imgSegmentation(ImageData &img_raw, ImageData &img_segmented);

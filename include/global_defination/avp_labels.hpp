@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-02 13:39:31
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-02 14:07:01
+ * @Last Modified time: 2022-10-18 10:15:31
  */
 #ifndef _AVP_LABELS_H_
 #define _AVP_LABELS_H_
@@ -21,15 +21,7 @@ enum AVPLabels {
   BACKGROUND = 6,
 };
 
-std::vector<cv::Scalar> AVPColors{
-    cv::Scalar(0, 0, 0),      // ROAD
-    cv::Scalar(245, 45, 190), // LANE_LINE
-    cv::Scalar(65, 125, 255), // PARKING _LINE
-    cv::Scalar(255, 255, 0),  // MARKER
-    cv::Scalar(0, 0, 0),      // CROSSING
-    cv::Scalar(0, 0, 0),      // VEHICLE
-    cv::Scalar(0, 0, 0),      // BACKGROUND
-};
+extern std::vector<cv::Scalar> AVPColors;
 
 }; // namespace avp_mapping
 

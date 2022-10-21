@@ -14,7 +14,7 @@
 namespace avp_mapping {
 
 class VoxelFilter : public CloudFilterInterface {
-
+public:
   VoxelFilter(const YAML::Node &node);
   VoxelFilter(float leaf_size_x, float leaf_size_y, float leaf_size_z);
 
