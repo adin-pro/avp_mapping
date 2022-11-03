@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-17 10:41:43
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 20:43:33
+ * @Last Modified time: 2022-11-03 18:55:46
  */
 #ifndef _CAMERA_MODEL_H_
 #define _CAMERA_MODEL_H_
@@ -34,8 +34,8 @@ public:
                     CloudData::CLOUD_PTR &bev_cloud_output,
                     const Eigen::Matrix4f &camera_to_base);
 
-  bool img2BevImage(const cv::Mat &img_input, const cv::Mat &img_output,
-                    Eigen::Matrix4f &base2cam, float scale);
+  bool img2BevImage(const cv::Mat &img_input, cv::Mat &img_output,
+                    Eigen::Matrix4f &base2cam, float scale=0.05);
 
   Eigen::Matrix3f getIntrinsic();
 

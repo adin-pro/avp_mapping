@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-15 19:56:17
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-03 16:21:42
+ * @Last Modified time: 2022-11-03 20:08:17
  */
 
 #include <algorithm>
@@ -104,23 +104,23 @@ bool DataPretreatFlow::readData() {
     return false;
   }
 
-  double img_sync_time = img_data_buff_0_.front().time;
+  img_sync_time_ = img_data_buff_0_.front().time;
 
-  img_sync_time = std::max(img_sync_time, img_data_buff_1_.front().time);
-  img_sync_time = std::max(img_sync_time, img_data_buff_2_.front().time);
-  img_sync_time = std::max(img_sync_time, img_data_buff_3_.front().time);
-  img_sync_time = std::max(img_sync_time, img_data_buff_4_.front().time);
-  img_sync_time = std::max(img_sync_time, img_data_buff_5_.front().time);
+  img_sync_time_ = std::max(img_sync_time_, img_data_buff_1_.front().time);
+  img_sync_time_ = std::max(img_sync_time_, img_data_buff_2_.front().time);
+  img_sync_time_ = std::max(img_sync_time_, img_data_buff_3_.front().time);
+  img_sync_time_ = std::max(img_sync_time_, img_data_buff_4_.front().time);
+  img_sync_time_ = std::max(img_sync_time_, img_data_buff_5_.front().time);
 
-  bool sync_0 = ImageData::syncData(img_data_buff_0_, img_sync_time);
-  bool sync_1 = ImageData::syncData(img_data_buff_1_, img_sync_time);
-  bool sync_2 = ImageData::syncData(img_data_buff_2_, img_sync_time);
-  bool sync_3 = ImageData::syncData(img_data_buff_3_, img_sync_time);
-  bool sync_4 = ImageData::syncData(img_data_buff_4_, img_sync_time);
-  bool sync_5 = ImageData::syncData(img_data_buff_5_, img_sync_time);
+  bool sync_0 = ImageData::syncData(img_data_buff_0_, img_sync_time_);
+  bool sync_1 = ImageData::syncData(img_data_buff_1_, img_sync_time_);
+  bool sync_2 = ImageData::syncData(img_data_buff_2_, img_sync_time_);
+  bool sync_3 = ImageData::syncData(img_data_buff_3_, img_sync_time_);
+  bool sync_4 = ImageData::syncData(img_data_buff_4_, img_sync_time_);
+  bool sync_5 = ImageData::syncData(img_data_buff_5_, img_sync_time_);
 
   if (sync_0 && sync_1 && sync_2 && sync_3 && sync_4 && sync_5) {
-    LOG(INFO) << "Sync time " << img_sync_time;
+    LOG(INFO) << "Sync time " << img_sync_time_;
     return true;
   } else {
     LOG(INFO) << "Sync failed";
@@ -167,8 +167,25 @@ bool DataPretreatFlow::publishData() {
   auto clock_start = std::chrono::system_clock::now();
 
   LOG(INFO) << "publish image";
-  img_pub_ptr_->publish(img_data_buff_0_.front().image,
-                        img_data_buff_0_.front().time);
+  cv::Mat bev_image(cv::Size(400, 400), CV_8UC3, cv::Scalar(0, 0, 0));
+  float scale = 0.05;
+  camera_.img2BevImage(img_data_buff_0_.front().image, bev_image,
+                       base_to_camera0_, scale);
+  camera_.img2BevImage(img_data_buff_1_.front().image, bev_image,
+                       base_to_camera1_, scale);
+  camera_.img2BevImage(img_data_buff_2_.front().image, bev_image,
+                       base_to_camera2_, scale);
+  camera_.img2BevImage(img_data_buff_3_.front().image, bev_image,
+                       base_to_camera3_, scale);
+  camera_.img2BevImage(img_data_buff_4_.front().image, bev_image,
+                       base_to_camera4_, scale);
+  camera_.img2BevImage(img_data_buff_5_.front().image, bev_image,
+                       base_to_camera5_, scale);
+
+  img_pub_ptr_->publish(bev_image,
+                        img_sync_time_);
+
+  
   auto clock_img_finish = std::chrono::system_clock::now();
   // point 2 cloud
   bev_cloud_ptr_->clear();

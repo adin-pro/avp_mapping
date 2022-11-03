@@ -3,10 +3,10 @@ project(avp_mapping)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-# SET(CMAKE_BUILD_TYPE "Release")
-SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 add_compile_options(-std=c++14)
 add_definitions(-std=c++14)
+SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 set(CMAKE_CXX_STANDARD 14)
 
 ## Find catkin macros and libraries
@@ -51,5 +51,10 @@ add_executable(avp_data_pretreat_node src/apps/avp_data_pretreat_node.cpp ${ALL_
 add_dependencies(avp_data_pretreat_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(avp_data_pretreat_node ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
 
+# add_executable(generate_pointcloud src/apps/pointCloudFromRGB_node.cpp ${ALL_SRCS})
+# add_dependencies(generate_pointcloud ${catkin_EXPORTED_TARGETS})
+# target_link_libraries(generate_pointcloud ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
 
 
+# add_executable(generate_pointcloud src/apps/pointCloudFromRGB_node.cpp)
+# target_link_libraries(generate_pointcloud ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})

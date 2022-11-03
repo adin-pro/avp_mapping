@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-02 14:23:54
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 20:36:57
+ * @Last Modified time: 2022-11-03 18:58:00
  */
 #ifndef _DATA_PRETREAT_FLOW_H_
 #define _DATA_PRETREAT_FLOW_H_
@@ -92,6 +92,8 @@ private:
   Eigen::Matrix4f base_to_camera5_ = Eigen::Matrix4f::Identity();
 
   CameraModel camera_;
+
+  double img_sync_time_ = 0.0;
 
   std::shared_ptr<CloudFilterInterface> filter_ptr_;
 

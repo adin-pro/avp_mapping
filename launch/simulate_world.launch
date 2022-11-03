@@ -1,0 +1,8 @@
+<launch>
+    <!-- simulation environment -->
+    <include file="$(find simulate_environment)/launch/multiCamera.launch" />
+
+    <!-- generate point cloud from RGB image of multi cameras -->
+    <!-- <node name="avp_data_pretreat_node" pkg="avp_mapping" type="avp_data_pretreat_node" output="screen">
+    </node> -->
+</launch>

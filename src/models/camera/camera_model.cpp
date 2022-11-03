@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-17 11:07:06
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-03 16:19:22
+ * @Last Modified time: 2022-11-03 20:42:36
  */
 
 #include <chrono>
@@ -92,8 +92,8 @@ void calCloudFromImage(Eigen::Matrix3d &K, Eigen::Matrix3d &RT,
 }
 
 bool CameraModel::img2BevCloudWrapper(const cv::Mat &img_input,
-                    CloudData::CLOUD_PTR &bev_cloud_output,
-                    const Eigen::Matrix4f &base2cam) {
+                                      CloudData::CLOUD_PTR &bev_cloud_output,
+                                      const Eigen::Matrix4f &base2cam) {
   // extrinsic
   Eigen::Matrix3d cam2base;
   cam2base << base2cam(0, 0), base2cam(0, 1), base2cam(0, 3), base2cam(1, 0),
@@ -102,18 +102,18 @@ bool CameraModel::img2BevCloudWrapper(const cv::Mat &img_input,
   Eigen::Matrix3d cam2base_inv = cam2base.inverse();
   Eigen::Matrix3d K_double = K_.cast<double>();
   calCloudFromImage(K_double, cam2base_inv, img_input, bev_cloud_output);
+  return true;
 }
-
 
 bool CameraModel::img2BevCloud(const cv::Mat &img_input,
                                CloudData::CLOUD_PTR &bev_cloud_output,
                                const Eigen::Matrix4f &base2cam) {
   // extrinsic
-  Eigen::Matrix3f cam2base;
-  cam2base << base2cam(0, 0), base2cam(0, 1), base2cam(0, 3), base2cam(1, 0),
-      base2cam(1, 1), base2cam(1, 3), base2cam(2, 0), base2cam(2, 1),
-      base2cam(2, 3);
-  Eigen::Matrix3f cam2base_inv = cam2base.inverse();
+  Eigen::Matrix3f base2cam_mat33;
+  base2cam_mat33 << base2cam(0, 0), base2cam(0, 1), base2cam(0, 3),
+      base2cam(1, 0), base2cam(1, 1), base2cam(1, 3), base2cam(2, 0),
+      base2cam(2, 1), base2cam(2, 3);
+  Eigen::Matrix3f cam2base = base2cam_mat33.inverse();
   // iteration
   int rows = img_input.rows;
   int cols = img_input.cols;
@@ -135,7 +135,7 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
       pp(1) = v;
       pp(2) = 1.0;
       // point in world coordinate
-      Eigen::Vector3f pw =  cam2base_inv * axis_trans_ * K_inv_ * pp;
+      Eigen::Vector3f pw = cam2base * axis_trans_ * K_inv_ * pp;
       // convert pw to homogeneous coordinates
       pw(0) /= pw(2);
       pw(1) /= pw(2);
@@ -163,8 +163,46 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
   return true;
 }
 
-bool CameraModel::img2BevImage(const cv::Mat &img_input, const cv::Mat &img_output,
-                  Eigen::Matrix4f &base2cam, float scale) {
+/*
+convert pin-hole image to bird-eye-view image using intrinsic and extrinsic
+images
+@param img: original image
+@param bev_img: bird-eye-view image after IPM
+@param base2cam: transformation from base_link to camera_link
+@param scale: zoom scale -> m/pixel, default value is 0.05 m/pixel
+*/
+
+bool CameraModel::img2BevImage(const cv::Mat &img, cv::Mat &bev_img,
+                               Eigen::Matrix4f &base2cam, float scale) {
+
+  int rows = bev_img.rows;
+  int cols = bev_img.cols;
+  int u_max = img.cols;
+  int v_max = img.rows;
+  Eigen::Matrix3f rot = base2cam.block<3, 3>(0, 0);
+  Eigen::Vector3f trans = base2cam.block<3, 1>(0, 3);
+  Eigen::Vector3f pw; // world coordinate
+  Eigen::Vector3f pc; // camera coordinate
+  Eigen::Matrix3f axis_base_2_cam;
+  axis_base_2_cam << 0, -1, 0, 0, 0, -1, 1, 0, 0;
+
+  for (int row = 0; row < rows; ++row) {
+    for (int col = 0; col < cols; ++col) {
+      pw.x() = (rows / 2 - row) * scale;
+      pw.y() = (cols / 2 - col) * scale;
+      pw.z() = 0.0;
+
+      pc = rot * pw + trans;
+      pc = K_ * axis_base_2_cam * pc;
+      int u = pc.x() / pc.z();
+      int v = pc.y() / pc.z();
+      if (pc.z() < 0 || u < 0 || u >= u_max || v < 0 || v >= v_max)
+        continue;
+      bev_img.at<cv::Vec3b>(row, col)[0] = img.at<cv::Vec3b>(v, u)[0];
+      bev_img.at<cv::Vec3b>(row, col)[1] = img.at<cv::Vec3b>(v, u)[1];
+      bev_img.at<cv::Vec3b>(row, col)[2] = img.at<cv::Vec3b>(v, u)[2];
+    }
+  }
 
   return true;
 }
