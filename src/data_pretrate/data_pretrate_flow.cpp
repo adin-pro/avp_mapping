@@ -2,10 +2,11 @@
  * @Author: ding.yin
  * @Date: 2022-10-15 19:56:17
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 20:42:04
+ * @Last Modified time: 2022-11-03 16:21:42
  */
 
 #include <algorithm>
+#include <chrono>
 
 #include "glog/logging.h"
 
@@ -31,6 +32,7 @@ DataPretreatFlow::DataPretreatFlow(ros::NodeHandle &nh) {
   odom_sub_ptr_ = std::make_shared<OdometrySubscriber>(nh, "/odom", 100);
 
   // TF listener
+  // baselink_to_cameraX
   base_to_camera0_ptr_ =
       std::make_shared<TFListener>(nh, "/camera0_link", "/base_link");
   base_to_camera1_ptr_ =
@@ -53,6 +55,9 @@ DataPretreatFlow::DataPretreatFlow(ros::NodeHandle &nh) {
   camera_ = CameraModel(337.2084410968044, 337.2084410968044, 320.5, 240.5);
 
   filter_ptr_ = std::make_shared<VoxelFilter>(0.1, 0.1, 0.1);
+
+  bev_cloud_ptr_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
+  filtered_bev_cloud_ptr_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
 }
 
 bool DataPretreatFlow::run() {
@@ -62,12 +67,17 @@ bool DataPretreatFlow::run() {
   if (!initCalibration())
     return false;
 
-  while (hasData()) {
-    // if (!validData())
-    //   continue;
-    transformData();
+  // while (hasData()) {
+  //   if (!validData())
+  //     continue;
+  //   transformData();
+  //   publishData();
+  // }
+
+  if (hasData()) {
     publishData();
   }
+
   return true;
 }
 
@@ -90,31 +100,32 @@ bool DataPretreatFlow::readData() {
   LOG(INFO) << "Odom buffer size: " << odom_data_buff_.size();
 
   if (img_data_buff_0_.size() == 0) {
-    LOG(ERROR) << "Empty Image buffer";
+    LOG(INFO) << "Empty Image buffer";
     return false;
   }
 
-  // double img_sync_time = img_data_buff_0_.front().time;
-  // img_sync_time = std::max(img_sync_time, img_data_buff_1_.front().time);
-  // img_sync_time = std::max(img_sync_time, img_data_buff_2_.front().time);
-  // img_sync_time = std::max(img_sync_time, img_data_buff_3_.front().time);
-  // img_sync_time = std::max(img_sync_time, img_data_buff_4_.front().time);
-  // img_sync_time = std::max(img_sync_time, img_data_buff_5_.front().time);
+  double img_sync_time = img_data_buff_0_.front().time;
 
-  // bool sync_0 = ImageData::syncData(img_data_buff_0_, img_sync_time);
-  // bool sync_1 = ImageData::syncData(img_data_buff_1_, img_sync_time);
-  // bool sync_2 = ImageData::syncData(img_data_buff_2_, img_sync_time);
-  // bool sync_3 = ImageData::syncData(img_data_buff_3_, img_sync_time);
-  // bool sync_4 = ImageData::syncData(img_data_buff_4_, img_sync_time);
-  // bool sync_5 = ImageData::syncData(img_data_buff_5_, img_sync_time);
+  img_sync_time = std::max(img_sync_time, img_data_buff_1_.front().time);
+  img_sync_time = std::max(img_sync_time, img_data_buff_2_.front().time);
+  img_sync_time = std::max(img_sync_time, img_data_buff_3_.front().time);
+  img_sync_time = std::max(img_sync_time, img_data_buff_4_.front().time);
+  img_sync_time = std::max(img_sync_time, img_data_buff_5_.front().time);
 
-  // if (sync_0 && sync_1 && sync_2 && sync_3 && sync_4 && sync_5) {
-  //   LOG(INFO) << "Sync time " << img_sync_time;
-  //   return true;
-  // } else {
-  //   LOG(ERROR) << "Sync failed";
-  //   return false;
-  // }
+  bool sync_0 = ImageData::syncData(img_data_buff_0_, img_sync_time);
+  bool sync_1 = ImageData::syncData(img_data_buff_1_, img_sync_time);
+  bool sync_2 = ImageData::syncData(img_data_buff_2_, img_sync_time);
+  bool sync_3 = ImageData::syncData(img_data_buff_3_, img_sync_time);
+  bool sync_4 = ImageData::syncData(img_data_buff_4_, img_sync_time);
+  bool sync_5 = ImageData::syncData(img_data_buff_5_, img_sync_time);
+
+  if (sync_0 && sync_1 && sync_2 && sync_3 && sync_4 && sync_5) {
+    LOG(INFO) << "Sync time " << img_sync_time;
+    return true;
+  } else {
+    LOG(INFO) << "Sync failed";
+    return false;
+  }
   return true;
 }
 
@@ -138,14 +149,14 @@ bool DataPretreatFlow::hasData() {
   if (img_data_buff_0_.size() == 0 || img_data_buff_1_.size() == 0 ||
       img_data_buff_2_.size() == 0 || img_data_buff_3_.size() == 0 ||
       img_data_buff_4_.size() == 0 || img_data_buff_5_.size() == 0) {
-    LOG(ERROR) << "do not has image data";
+    LOG(INFO) << "do not has image data";
     return false;
   }
 
-  // if (odom_data_buff_.size() == 0) {
-  //   LOG(ERROR) << "do not has odom data";
-  //   return false;
-  // }
+  if (odom_data_buff_.size() == 0) {
+    LOG(INFO) << "do not has odom data";
+    return false;
+  }
 
   return true;
 }
@@ -153,22 +164,74 @@ bool DataPretreatFlow::hasData() {
 bool DataPretreatFlow::validData() { return true; }
 
 bool DataPretreatFlow::publishData() {
-  LOG(INFO) << "publish data";
-  ImageData img_data = img_data_buff_0_.front();
-  img_pub_ptr_->publish(img_data.image.clone(), img_data.time);
-  CloudData::CLOUD_PTR bev_cloud_ptr(new CloudData::CLOUD());
-  bev_cloud_ptr->clear();
-  camera_.img2BevCloud(img_data, bev_cloud_ptr, base_to_camera0_);
-  CloudData::CLOUD_PTR filtered_bev_cloud_ptr(new CloudData::CLOUD());
-  filter_ptr_->filter(bev_cloud_ptr, filtered_bev_cloud_ptr);
-  LOG(INFO) << "bev ipm";
-  cloud_pub_ptr_->publish(filtered_bev_cloud_ptr);
+  auto clock_start = std::chrono::system_clock::now();
+
+  LOG(INFO) << "publish image";
+  img_pub_ptr_->publish(img_data_buff_0_.front().image,
+                        img_data_buff_0_.front().time);
+  auto clock_img_finish = std::chrono::system_clock::now();
+  // point 2 cloud
+  bev_cloud_ptr_->clear();
+  camera_.img2BevCloud(img_data_buff_0_.front().image, bev_cloud_ptr_,
+                       base_to_camera0_);
+  camera_.img2BevCloud(img_data_buff_1_.front().image, bev_cloud_ptr_,
+                       base_to_camera1_);
+  camera_.img2BevCloud(img_data_buff_2_.front().image, bev_cloud_ptr_,
+                       base_to_camera2_);
+  camera_.img2BevCloud(img_data_buff_3_.front().image, bev_cloud_ptr_,
+                       base_to_camera3_);
+  camera_.img2BevCloud(img_data_buff_4_.front().image, bev_cloud_ptr_,
+                       base_to_camera4_);
+  camera_.img2BevCloud(img_data_buff_5_.front().image, bev_cloud_ptr_,
+                       base_to_camera5_);
+  auto cloud_transform_finish = std::chrono::system_clock::now();
+  // filter
+  filtered_bev_cloud_ptr_->clear();
+  LOG(INFO) << "bev ipm cloud: " << bev_cloud_ptr_->points.size();
+  filter_ptr_->filter(bev_cloud_ptr_, filtered_bev_cloud_ptr_);
+  LOG(INFO) << "filtered ipm cloud: " << filtered_bev_cloud_ptr_->points.size();
+  auto filter_finish = std::chrono::system_clock::now();
+  cloud_pub_ptr_->publish(filtered_bev_cloud_ptr_);
+  auto publish_cloud_finish = std::chrono::system_clock::now();
   img_data_buff_0_.pop_front();
   img_data_buff_1_.pop_front();
   img_data_buff_2_.pop_front();
   img_data_buff_3_.pop_front();
   img_data_buff_4_.pop_front();
   img_data_buff_5_.pop_front();
+  auto pop_finish = std::chrono::system_clock::now();
+
+  LOG(INFO) << "publish image: "
+            << double(std::chrono::duration_cast<std::chrono::microseconds>(
+                          clock_img_finish - clock_start)
+                          .count()) *
+                   std::chrono::microseconds::period::num /
+                   std::chrono::microseconds::period::den;
+  LOG(INFO) << "cloud transform: "
+            << double(std::chrono::duration_cast<std::chrono::microseconds>(
+                          cloud_transform_finish - clock_img_finish)
+                          .count()) *
+                   std::chrono::microseconds::period::num /
+                   std::chrono::microseconds::period::den;
+  LOG(INFO) << "cloud filter: "
+            << double(std::chrono::duration_cast<std::chrono::microseconds>(
+                          filter_finish - cloud_transform_finish)
+                          .count()) *
+                   std::chrono::microseconds::period::num /
+                   std::chrono::microseconds::period::den;
+  LOG(INFO) << "publish_cloud_finish: "
+            << double(std::chrono::duration_cast<std::chrono::microseconds>(
+                          publish_cloud_finish - filter_finish)
+                          .count()) *
+                   std::chrono::microseconds::period::num /
+                   std::chrono::microseconds::period::den;
+  LOG(INFO) << "pop_finish: "
+            << double(std::chrono::duration_cast<std::chrono::microseconds>(
+                          pop_finish - publish_cloud_finish)
+                          .count()) *
+                   std::chrono::microseconds::period::num /
+                   std::chrono::microseconds::period::den;
+
   return true;
 }
 

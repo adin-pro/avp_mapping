@@ -19,7 +19,7 @@ void ImageSubscriber::msg_callback(const sensor_msgs::ImageConstPtr& image_msg_p
   std::unique_lock<std::mutex> ulock(buff_mutex_);
   ImageData img_data;
   img_data.time = image_msg_ptr->header.stamp.toSec();
-  img_data.image = cv_bridge::toCvShare(image_msg_ptr)->image;
+  img_data.image = cv_bridge::toCvCopy(image_msg_ptr)->image;
   latest_deque_image_data_.push_back(img_data);
 }
 

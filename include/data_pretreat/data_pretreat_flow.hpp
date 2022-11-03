@@ -94,6 +94,9 @@ private:
   CameraModel camera_;
 
   std::shared_ptr<CloudFilterInterface> filter_ptr_;
+
+  CloudData::CLOUD_PTR bev_cloud_ptr_;
+  CloudData::CLOUD_PTR filtered_bev_cloud_ptr_;
 };
 
 } // namespace avp_mapping

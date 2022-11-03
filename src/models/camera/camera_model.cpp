@@ -2,12 +2,14 @@
  * @Author: ding.yin
  * @Date: 2022-10-17 11:07:06
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 20:43:38
+ * @Last Modified time: 2022-11-03 16:19:22
  */
 
-#include "models/camera/camera_model.hpp"
-#include "glog/logging.h"
+#include <chrono>
 #include <iostream>
+
+#include "glog/logging.h"
+#include "models/camera/camera_model.hpp"
 namespace avp_mapping {
 
 CameraModel::CameraModel(YAML::Node &node) {
@@ -20,6 +22,7 @@ CameraModel::CameraModel(YAML::Node &node) {
   K_(0, 2) = cx_;
   K_(1, 2) = cy_;
   K_(2, 2) = 1.0f;
+  K_inv_ = K_.inverse();
 }
 
 CameraModel::CameraModel(float fx, float fy, float cx, float cy)
@@ -29,44 +32,110 @@ CameraModel::CameraModel(float fx, float fy, float cx, float cy)
   K_(0, 2) = cx_;
   K_(1, 2) = cy_;
   K_(2, 2) = 1.0f;
+  K_inv_ = K_.inverse();
 }
 
-bool CameraModel::img2BevCloud(ImageData &img_input,
+void calCloudFromImage(Eigen::Matrix3d &K, Eigen::Matrix3d &RT,
+                       const cv::Mat &image,
+                       pcl::PointCloud<CloudData::POINT>::Ptr &cameraCloud) {
+  Eigen::Matrix3d KInv = K.inverse();
+  Eigen::Matrix3d RTInv = RT.inverse();
+  int row = image.rows;
+  int col = image.cols;
+  auto start_time = std::chrono::system_clock::now();
+  for (int i = 0; i < row; i = i + 2) {
+    const uchar *p = image.ptr<uchar>(i);
+    for (int j = 0; j < col; j = j + 4) {
+
+      int b = p[3 * j];
+      int g = p[3 * j + 1];
+      int r = p[3 * j + 2];
+      //   there,for simplicity,just according to color,detect invalid area like
+      //   sky area; for real scene,should adapt machine learning method or
+      //   other method detecting invalid area
+      if (b == 178) {
+        break;
+      }
+
+      Eigen::Vector3d u;
+      u(0) = j;
+      u(1) = i;
+      u(2) = 1;
+      Eigen::Vector3d u1;
+
+      u1 = KInv * u;
+      u1 = RTInv * u1;
+      u1(0) = u1.x() / u1.z();
+      u1(1) = u1.y() / u1.z();
+      double dis = sqrt(u1.x() * u1.x() + u1.y() * u1.y());
+
+      if (dis > 10)
+        continue;
+
+      CloudData::POINT po;
+      po.x = u1.x();
+      po.y = u1.y();
+      po.z = 0;
+      po.r = r;
+      po.g = g;
+      po.b = b;
+      cameraCloud->push_back(po);
+    }
+  }
+  auto end_time = std::chrono::system_clock::now();
+  LOG(INFO) << "transform loop: "
+            << double(std::chrono::duration_cast<std::chrono::microseconds>(
+                          end_time - start_time)
+                          .count()) *
+                   std::chrono::microseconds::period::num /
+                   std::chrono::microseconds::period::den;
+}
+
+bool CameraModel::img2BevCloudWrapper(const cv::Mat &img_input,
+                    CloudData::CLOUD_PTR &bev_cloud_output,
+                    const Eigen::Matrix4f &base2cam) {
+  // extrinsic
+  Eigen::Matrix3d cam2base;
+  cam2base << base2cam(0, 0), base2cam(0, 1), base2cam(0, 3), base2cam(1, 0),
+      base2cam(1, 1), base2cam(1, 3), base2cam(2, 0), base2cam(2, 1),
+      base2cam(2, 3);
+  Eigen::Matrix3d cam2base_inv = cam2base.inverse();
+  Eigen::Matrix3d K_double = K_.cast<double>();
+  calCloudFromImage(K_double, cam2base_inv, img_input, bev_cloud_output);
+}
+
+
+bool CameraModel::img2BevCloud(const cv::Mat &img_input,
                                CloudData::CLOUD_PTR &bev_cloud_output,
-                               Eigen::Matrix4f &base2cam) {
-  // intrinsic
-  Eigen::Matrix3f K_inv = K_.inverse();
-  //extrinsic
+                               const Eigen::Matrix4f &base2cam) {
+  // extrinsic
   Eigen::Matrix3f cam2base;
   cam2base << base2cam(0, 0), base2cam(0, 1), base2cam(0, 3), base2cam(1, 0),
       base2cam(1, 1), base2cam(1, 3), base2cam(2, 0), base2cam(2, 1),
       base2cam(2, 3);
   Eigen::Matrix3f cam2base_inv = cam2base.inverse();
-  Eigen::Matrix3f axis_trans =
-      (Eigen::Matrix3f() << 0, 0, 1, -1, 0, 0, 0, -1, 0).finished();
   // iteration
-  cv::Mat image = img_input.image.clone();  
-  int rows = image.rows;
-  int cols = image.cols;
-  for (int v = 0; v < rows; v += 10) {
+  int rows = img_input.rows;
+  int cols = img_input.cols;
+  auto start_time = std::chrono::system_clock::now();
+  for (int v = 0; v < rows; v += 2) {
     // row pointer
-    const uchar *ptr = image.ptr<uchar>(v);
-    for (int u = 0; u < cols; u += 10) {
+    const uchar *ptr = img_input.ptr<uchar>(v);
+    for (int u = 0; u < cols; u += 4) {
       // bgr color encoding
       int b = ptr[3 * u];
       int g = ptr[3 * u + 1];
       int r = ptr[3 * u + 2];
+      // sky color
+      if (b == 178)
+        break;
       // point of pixel
       Eigen::Vector3f pp;
       pp(0) = u;
       pp(1) = v;
       pp(2) = 1.0;
-      // point in camera coordinate
-      Eigen::Vector3f pc = K_inv * pp;
-      // axis transfromation
-      pc = axis_trans * pc;
       // point in world coordinate
-      Eigen::Vector3f pw = cam2base_inv * pc;
+      Eigen::Vector3f pw =  cam2base_inv * axis_trans_ * K_inv_ * pp;
       // convert pw to homogeneous coordinates
       pw(0) /= pw(2);
       pw(1) /= pw(2);
@@ -81,14 +150,21 @@ bool CameraModel::img2BevCloud(ImageData &img_input,
       cloud_point.r = r;
       cloud_point.b = b;
       cloud_point.g = g;
-      bev_cloud_output->points.push_back(cloud_point);
+      bev_cloud_output->push_back(cloud_point);
     }
   }
+  auto end_time = std::chrono::system_clock::now();
+  LOG(INFO) << "transform loop: "
+            << double(std::chrono::duration_cast<std::chrono::microseconds>(
+                          end_time - start_time)
+                          .count()) *
+                   std::chrono::microseconds::period::num /
+                   std::chrono::microseconds::period::den;
   return true;
 }
 
-bool img2BevImage(ImageData &img_input, ImageData &img_output,
-                  Eigen::Matrix4f &camera_to_base, float scale) {
+bool CameraModel::img2BevImage(const cv::Mat &img_input, const cv::Mat &img_output,
+                  Eigen::Matrix4f &base2cam, float scale) {
 
   return true;
 }
