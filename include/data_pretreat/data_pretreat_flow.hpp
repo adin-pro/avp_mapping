@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-02 14:23:54
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-03 18:58:00
+ * @Last Modified time: 2022-11-06 13:59:33
  */
 #ifndef _DATA_PRETREAT_FLOW_H_
 #define _DATA_PRETREAT_FLOW_H_
@@ -41,6 +41,7 @@ private:
   bool validData();
   bool publishData();
   bool transformData();
+  bool pop_image_data();
 
 private:
   // subscriber
@@ -73,6 +74,7 @@ private:
   std::deque<ImageData> img_data_buff_5_;
   std::deque<IMUData> imu_data_buff_;
   std::deque<PoseData> odom_data_buff_;
+  std::deque<PoseData> unsynced_odom_data_buff;
 
   ImageData cur_img_0_;
   ImageData cur_img_1_;

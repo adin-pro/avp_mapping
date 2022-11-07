@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-10-17 11:07:06
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-03 20:42:36
+ * @Last Modified time: 2022-11-06 14:29:05
  */
 
 #include <chrono>
@@ -126,6 +126,8 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
       int b = ptr[3 * u];
       int g = ptr[3 * u + 1];
       int r = ptr[3 * u + 2];
+      if (r <= 10 && g <= 10 && b <= 10)
+        continue;
       // sky color
       if (b == 178)
         break;
@@ -140,8 +142,8 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
       pw(0) /= pw(2);
       pw(1) /= pw(2);
       // remove low reliable points
-      double distance = sqrt(pw.x() * pw.x() + pw.y() * pw.y());
-      if (distance > 10.0)
+      // double distance = sqrt(pw.x() * pw.x() + pw.y() * pw.y());
+      if (fabsf64(pw.x()) > 10.0 || fabsf64(pw.y()) > 10.0)
         continue;
       CloudData::POINT cloud_point;
       cloud_point.x = pw.x();

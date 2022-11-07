@@ -12,7 +12,7 @@ namespace avp_mapping {
 bool ImageData::syncData(std::deque<ImageData> &unsynced_data,
                          double sync_time) {
   while (unsynced_data.size() > 0) {
-    if (unsynced_data.front().time < sync_time) {
+    if ((sync_time - unsynced_data.front().time) > 0.03) {
       unsynced_data.pop_front();
     } else {
       break;

@@ -2,15 +2,14 @@
  * @Author: ding.yin
  * @Date: 2022-10-15 19:56:17
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-03 20:08:17
+ * @Last Modified time: 2022-11-06 16:25:12
  */
 
+#include "data_pretreat/data_pretreat_flow.hpp"
 #include <algorithm>
 #include <chrono>
 
 #include "glog/logging.h"
-
-#include "data_pretreat/data_pretreat_flow.hpp"
 #include "models/cloud_filter/voxel_filter.hpp"
 
 namespace avp_mapping {
@@ -88,8 +87,7 @@ bool DataPretreatFlow::readData() {
   img_sub_ptr_3_->parseData(img_data_buff_3_);
   img_sub_ptr_4_->parseData(img_data_buff_4_);
   img_sub_ptr_5_->parseData(img_data_buff_5_);
-
-  odom_sub_ptr_->parseData(odom_data_buff_);
+  // odom_sub_ptr_->parseData(unsynced_odom_data_buff);
 
   LOG(INFO) << "Image0 buffer size: " << img_data_buff_0_.size();
   LOG(INFO) << "Image1 buffer size: " << img_data_buff_1_.size();
@@ -97,14 +95,24 @@ bool DataPretreatFlow::readData() {
   LOG(INFO) << "Image3 buffer size: " << img_data_buff_3_.size();
   LOG(INFO) << "Image4 buffer size: " << img_data_buff_4_.size();
   LOG(INFO) << "Image5 buffer size: " << img_data_buff_5_.size();
-  LOG(INFO) << "Odom buffer size: " << odom_data_buff_.size();
+  // LOG(INFO) << "Unsynced Odom buffer size: " << unsynced_odom_data_buff.size();
+  // LOG(INFO) << "Synced Odom buffer size: " << odom_data_buff_.size();
 
-  if (img_data_buff_0_.size() == 0) {
-    LOG(INFO) << "Empty Image buffer";
+  if (img_data_buff_0_.size() == 0 || img_data_buff_1_.size() == 0 ||
+      img_data_buff_2_.size() == 0 || img_data_buff_3_.size() == 0 ||
+      img_data_buff_4_.size() == 0 || img_data_buff_5_.size() == 0) {
+    LOG(INFO) << "do not has enough image data";
     return false;
   }
 
   img_sync_time_ = img_data_buff_0_.front().time;
+
+  LOG(INFO) << "image 0 " << img_data_buff_0_.front().time; 
+  LOG(INFO) << "image 1 " << img_data_buff_1_.front().time; 
+  LOG(INFO) << "image 2 " << img_data_buff_2_.front().time; 
+  LOG(INFO) << "image 3 " << img_data_buff_3_.front().time; 
+  LOG(INFO) << "image 4 " << img_data_buff_4_.front().time; 
+  LOG(INFO) << "image 5 " << img_data_buff_5_.front().time; 
 
   img_sync_time_ = std::max(img_sync_time_, img_data_buff_1_.front().time);
   img_sync_time_ = std::max(img_sync_time_, img_data_buff_2_.front().time);
@@ -119,11 +127,20 @@ bool DataPretreatFlow::readData() {
   bool sync_4 = ImageData::syncData(img_data_buff_4_, img_sync_time_);
   bool sync_5 = ImageData::syncData(img_data_buff_5_, img_sync_time_);
 
+  // bool sync_odom = PoseData::syncData(unsynced_odom_data_buff, odom_data_buff_,
+  //                                     img_sync_time_);
+
   if (sync_0 && sync_1 && sync_2 && sync_3 && sync_4 && sync_5) {
     LOG(INFO) << "Sync time " << img_sync_time_;
+    // if (!sync_odom) {
+    //   LOG(INFO) << "Odom Sync failed";
+    //   LOG(INFO) << "Odom time " << unsynced_odom_data_buff.front().time;
+    //   pop_image_data();
+    //   return false;
+    // }
     return true;
   } else {
-    LOG(INFO) << "Sync failed";
+    LOG(INFO) << "Image Sync failed";
     return false;
   }
   return true;
@@ -153,15 +170,31 @@ bool DataPretreatFlow::hasData() {
     return false;
   }
 
-  if (odom_data_buff_.size() == 0) {
-    LOG(INFO) << "do not has odom data";
-    return false;
-  }
+  // if (unsynced_odom_data_buff.size() == 0) {
+  //   LOG(INFO) << "do not has odom data";
+  //   return false;
+  // }
 
   return true;
 }
 
 bool DataPretreatFlow::validData() { return true; }
+
+bool DataPretreatFlow::pop_image_data() {
+  if (img_data_buff_0_.size() == 0 || img_data_buff_1_.size() == 0 ||
+      img_data_buff_2_.size() == 0 || img_data_buff_3_.size() == 0 ||
+      img_data_buff_4_.size() == 0 || img_data_buff_5_.size() == 0) {
+    LOG(INFO) << "do not has image data to pop";
+    return false;
+  }
+  img_data_buff_0_.pop_front();
+  img_data_buff_1_.pop_front();
+  img_data_buff_2_.pop_front();
+  img_data_buff_3_.pop_front();
+  img_data_buff_4_.pop_front();
+  img_data_buff_5_.pop_front();
+  return true;
+}
 
 bool DataPretreatFlow::publishData() {
   auto clock_start = std::chrono::system_clock::now();
@@ -182,10 +215,8 @@ bool DataPretreatFlow::publishData() {
   camera_.img2BevImage(img_data_buff_5_.front().image, bev_image,
                        base_to_camera5_, scale);
 
-  img_pub_ptr_->publish(bev_image,
-                        img_sync_time_);
+  img_pub_ptr_->publish(bev_image, img_sync_time_);
 
-  
   auto clock_img_finish = std::chrono::system_clock::now();
   // point 2 cloud
   bev_cloud_ptr_->clear();
@@ -210,12 +241,7 @@ bool DataPretreatFlow::publishData() {
   auto filter_finish = std::chrono::system_clock::now();
   cloud_pub_ptr_->publish(filtered_bev_cloud_ptr_);
   auto publish_cloud_finish = std::chrono::system_clock::now();
-  img_data_buff_0_.pop_front();
-  img_data_buff_1_.pop_front();
-  img_data_buff_2_.pop_front();
-  img_data_buff_3_.pop_front();
-  img_data_buff_4_.pop_front();
-  img_data_buff_5_.pop_front();
+  pop_image_data();
   auto pop_finish = std::chrono::system_clock::now();
 
   LOG(INFO) << "publish image: "

@@ -2,7 +2,7 @@
  * @Author: Ren Qian
  * @Date: 2020-02-23 22:20:41
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 19:09:02
+ * @Last Modified time: 2022-11-05 22:07:25
  */
 #include "sensor_data/imu_data.hpp"
 
@@ -59,6 +59,7 @@ bool IMUData::syncData(std::deque<IMUData> &unsyncedData,
 
   synced_data.orientation.normlize();
   syncedData.push_back(synced_data);
+  return true;
 }
 
 } // namespace avp_mapping
