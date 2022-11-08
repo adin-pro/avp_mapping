@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-11-07 15:43:49
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-07 16:02:25
+ * @Last Modified time: 2022-11-07 21:25:42
  */
 
 #ifndef _BACK_END_FLOW_H_
@@ -26,7 +26,7 @@ namespace avp_mapping {
 class BackEndFlow {
 public:
   BackEndFlow(ros::NodeHandle &nh, const std::string cloud_topic,
-              const std::string odom_topic);
+              const std::string odom_topic, std::string work_dir);
 
   bool run();
 
@@ -48,18 +48,19 @@ private:
   std::shared_ptr<LoopPoseSubscriber> loop_pose_sub_ptr_;
 
   std::shared_ptr<OdometryPublisher> transformed_odom_pub_ptr_;
+  std::shared_ptr<KeyFramePublisher> key_reliable_odom_pub_ptr_;
   std::shared_ptr<KeyFramePublisher> key_frame_pub_ptr_;
   std::shared_ptr<KeyFramesPublisher> key_frames_pub_ptr_;
   std::shared_ptr<BackEnd> back_end_ptr_;
 
   std::deque<CloudData> cloud_data_buff_;
-  std::deque<PoseData> loop_pose_buff_;
+  std::deque<LoopPose> loop_pose_buff_;
   std::deque<PoseData> vidar_odom_buff_;
   std::deque<PoseData> reli_odom_buff_;
 
   PoseData curr_reli_odom_;
   PoseData curr_vidar_odom_;
-  PoseData curr_cloud_data_;
+  CloudData curr_cloud_data_;
 };
 
 } // namespace avp_mapping

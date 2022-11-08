@@ -2,7 +2,7 @@
  * @Author: Ren Qian
  * @Date: 2020-02-06 21:05:47
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 15:39:09
+ * @Last Modified time: 2022-11-07 21:08:28
  */
 #ifndef _KEYFRAMES_PUBLISHER_H_
 #define _KEYFRAMES_PUBLISHER_H_
@@ -17,7 +17,7 @@
 
 namespace avp_mapping {
 class KeyFramesPublisher {
-
+public:
   KeyFramesPublisher() = default;
   KeyFramesPublisher(ros::NodeHandle &nh, std::string topic_name,
                      std::string frame_id, size_t buff_size);

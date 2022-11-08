@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-11-07 14:56:08
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-07 15:17:13
+ * @Last Modified time: 2022-11-08 20:25:39
  */
 
 #ifndef _OPTIMIZER_INTERFACE_H_
@@ -43,11 +43,11 @@ public:
 
   virtual void addSE3PriorQuaternionEdge(int se3_vertex_index,
                                          const Eigen::Quaternionf &quat,
-                                         Eigen::VectorXd noise) = 0;
+                                         Eigen::VectorXf noise) = 0;
 
   virtual void setMaximumIteration(int max_iter) = 0;
 
-  int max_iteration_num = 30;
+  int max_iteration_num_ = 30;
 
 };
 

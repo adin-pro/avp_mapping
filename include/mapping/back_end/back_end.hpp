@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-11-07 14:30:16
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-07 15:43:16
+ * @Last Modified time: 2022-11-08 17:14:49
  */
 #ifndef _BACK_END_H_
 #define _BACK_END_H_
@@ -18,10 +18,14 @@
 
 #include "models/optimizer/optimizer_interface.hpp"
 
+#include "yaml-cpp/yaml.h"
+
 namespace avp_mapping {
 class BackEnd {
 public:
-  BackEnd();
+  BackEnd(std::string& work_dir);
+
+  // BackEnd() = default;
 
   bool update(const CloudData &cloud_data, const PoseData &vidar_odom,
               const PoseData &reliable_pose);
@@ -36,12 +40,12 @@ public:
 
   bool hasNewOptimized();
 
-  bool getLatesetKeyFrame(KeyFrame &kf);
+  void getLatesetKeyFrame(KeyFrame &kf);
 
-  bool getLatesetKeyReliableOdom(KeyFrame &kf);
+  void getLatesetKeyReliableOdom(KeyFrame &kf);
 
 private:
-  bool initWithConfig();
+  bool initWithConfig(std::string& work_dir);
 
   bool initParam(const YAML::Node &config_node);
 
@@ -55,10 +59,10 @@ private:
 
   bool addNodeAndEdge(const PoseData &reliable_odom);
 
-  bool maybeNewKeyFrame(const CloudData &cloud_data, const PoseData &vidar_odom,
+  bool needNewKeyFrame(const CloudData &cloud_data, const PoseData &vidar_odom,
                         const PoseData &reliable_pose);
 
-  bool maybeOptimized();
+  bool needOptimization();
 
   bool saveOptimizedPose();
 
@@ -92,7 +96,7 @@ private:
     }
 
   public:
-    bool use_gnss = true;
+    bool use_reliable_odom = true;
     bool use_loop_close = false;
 
     Eigen::VectorXd vidar_odom_edge_noise;
@@ -100,7 +104,7 @@ private:
     Eigen::VectorXd reliable_odom_noise;
 
     int optimize_step_with_key_frame = 100;
-    int optimize_step_with_gnss = 100;
+    int optimize_step_with_reliable_odom = 100;
     int optimize_step_with_loop = 10;
   };
   GraphOptimizerConfig graph_optimizer_config_;
