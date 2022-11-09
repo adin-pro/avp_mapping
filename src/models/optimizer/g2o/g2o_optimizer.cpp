@@ -2,13 +2,14 @@
  * @Author: ding.yin
  * @Date: 2022-11-08 17:16:23
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-08 20:31:31
+ * @Last Modified time: 2022-11-09 20:53:15
  */
 
 #include "models/optimizer/g2o/g2o_optimizer.hpp"
 
 #include "g2o/core/optimization_algorithm_factory.h"
 #include "tools/tic_toc.hpp"
+#include "glog/logging.h"
 
 namespace avp_mapping {
 
