@@ -60,6 +60,10 @@ add_executable(avp_back_end_node src/apps/avp_back_end_node.cpp ${ALL_SRCS})
 add_dependencies(avp_back_end_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(avp_back_end_node ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
 
+add_executable(avp_loop_closing_node src/apps/avp_loop_closing_node.cpp ${ALL_SRCS})
+add_dependencies(avp_loop_closing_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(avp_loop_closing_node ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
+
 # add_executable(generate_pointcloud src/apps/pointCloudFromRGB_node.cpp ${ALL_SRCS})
 # add_dependencies(generate_pointcloud ${catkin_EXPORTED_TARGETS})
 # target_link_libraries(generate_pointcloud ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
