@@ -2,7 +2,7 @@
  * @Author: Ren Qian
  * @Date: 2020-02-27 23:10:56
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-03 21:23:36
+ * @Last Modified time: 2022-11-12 21:05:23
  */
 
 #ifndef _POSE_DATA_H_
@@ -23,6 +23,13 @@ public:
                        std::deque<PoseData> &syncedData, double sync_time);
   static bool syncDataWithoutInterpolation(std::deque<PoseData> &unsyncedData,
                                            double sync_time);
+  static bool controlDuration(std::deque<PoseData> &pose_deque,
+                              double duration);
+  static bool getPoseDataByTS(std::deque<PoseData> &pose_deque,
+                               double timestamp, PoseData &result);
+  static bool isFarEnough(const PoseData& last_pose, const PoseData& curr_pose, double thre);
+
+  void printPos();
 };
 } // namespace avp_mapping
 

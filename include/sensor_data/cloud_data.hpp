@@ -2,10 +2,12 @@
  * @Author: Ren Qian
  * @Date: 2020-02-28 19:13:26
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-10-17 15:40:48
+ * @Last Modified time: 2022-11-12 17:28:27
  */
 #ifndef _CLOUD_DATA_H_
 #define _CLOUD_DATA_H_
+
+#include <deque>
 
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -19,6 +21,8 @@ public:
 
 public:
   CloudData() : cloud_ptr(new CLOUD()) {}
+  static bool controlDuration(std::deque<CloudData> &cloud_deque,
+                              double duration);
 
 public:
   double time = 0.0;
