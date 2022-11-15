@@ -31,11 +31,11 @@ public:
                     const Eigen::Matrix4f &camera_to_base);
 
   bool img2BevCloudWrapper(const cv::Mat &img_input,
-                    CloudData::CLOUD_PTR &bev_cloud_output,
-                    const Eigen::Matrix4f &camera_to_base);
+                           CloudData::CLOUD_PTR &bev_cloud_output,
+                           const Eigen::Matrix4f &camera_to_base);
 
   bool img2BevImage(const cv::Mat &img_input, cv::Mat &img_output,
-                    Eigen::Matrix4f &base2cam, float scale=0.05);
+                    Eigen::Matrix4f &base2cam, float scale = 0.05);
 
   Eigen::Matrix3f getIntrinsic();
 
@@ -50,6 +50,7 @@ private:
   Eigen::Matrix3f K_inv_ = Eigen::Matrix3f::Identity();
   Eigen::Matrix3f axis_trans_ =
       (Eigen::Matrix3f() << 0, 0, 1, -1, 0, 0, 0, -1, 0).finished();
+  double simi_thre_;
 };
 
 } // namespace avp_mapping

@@ -23,7 +23,7 @@ public:
   CloudData() : cloud_ptr(new CLOUD()) {}
   static bool controlDuration(std::deque<CloudData> &cloud_deque,
                               double duration);
-
+  // CloudData(const CloudData& obj);
 public:
   double time = 0.0;
   CLOUD_PTR cloud_ptr;

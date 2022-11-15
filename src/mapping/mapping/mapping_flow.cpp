@@ -8,7 +8,12 @@
 #include "mapping/mapping/mapping_flow.hpp"
 
 namespace avp_mapping {
-MappingFlow::MappingFlow(ros::NodeHandle &nh) {}
+MappingFlow::MappingFlow(ros::NodeHandle &nh) {
+  cloud_sub_ptr_ = std::make_shared<CloudSubscriber>(nh, "/bev/rgb_cloud", 1000);
+  odom_sub_ptr_ = std::make_shared<OdometrySubscriber>(nh, "/odom", 10000);
+  cloud_pub_ptr_ = std::make_shared<CloudPublisher>(nh, "/map_cloud", "/map", 1000);
+
+}
 
 bool MappingFlow::run() {
   if (!readData())

@@ -9,6 +9,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <Eigen/Dense>
 
 namespace avp_mapping {
 enum AVPLabels {
@@ -21,7 +22,7 @@ enum AVPLabels {
   BACKGROUND = 6,
 };
 
-extern std::vector<cv::Scalar> AVPColors;
+extern std::vector<Eigen::Vector3d> AVPColors;
 
 }; // namespace avp_mapping
 

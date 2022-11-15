@@ -21,6 +21,7 @@
 #include "publisher/cloud_publisher.hpp"
 #include "publisher/image_publisher.hpp"
 #include "publisher/tf_broadcaster.hpp"
+#include "publisher/odometry_publisher.hpp"
 
 #include "models/camera/camera_model.hpp"
 #include "models/cloud_filter/cloud_filter_interface.hpp"
@@ -65,6 +66,8 @@ private:
   std::shared_ptr<CloudPublisher> cloud_pub_ptr_;
   std::shared_ptr<ImagePublisher> img_pub_ptr_;
   std::shared_ptr<TFBroadCaster> tfbroad_pub_ptr_;
+  std::shared_ptr<OdometryPublisher> odom_pub_ptr_;
+
 
   std::deque<ImageData> img_data_buff_0_;
   std::deque<ImageData> img_data_buff_1_;

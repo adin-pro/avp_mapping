@@ -8,8 +8,11 @@
 #include <chrono>
 #include <iostream>
 
+#include "global_defination/avp_labels.hpp"
 #include "glog/logging.h"
 #include "models/camera/camera_model.hpp"
+#include "yaml-cpp/yaml.h"
+
 namespace avp_mapping {
 
 CameraModel::CameraModel(YAML::Node &node) {
@@ -23,6 +26,9 @@ CameraModel::CameraModel(YAML::Node &node) {
   K_(1, 2) = cy_;
   K_(2, 2) = 1.0f;
   K_inv_ = K_.inverse();
+  YAML::Node pretreat_node = YAML::LoadFile(
+      "/home/adin/catkin_ws/src/avp_mapping/config/mapping/data_pretreat.yaml");
+  simi_thre_ = pretreat_node["similarity_thre"].as<double>();
 }
 
 CameraModel::CameraModel(float fx, float fy, float cx, float cy)
@@ -33,6 +39,9 @@ CameraModel::CameraModel(float fx, float fy, float cx, float cy)
   K_(1, 2) = cy_;
   K_(2, 2) = 1.0f;
   K_inv_ = K_.inverse();
+  YAML::Node pretreat_node = YAML::LoadFile(
+      "/home/adin/catkin_ws/src/avp_mapping/config/mapping/data_pretreat.yaml");
+  simi_thre_ = pretreat_node["similarity_thre"].as<double>();
 }
 
 void calCloudFromImage(Eigen::Matrix3d &K, Eigen::Matrix3d &RT,
@@ -117,7 +126,7 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
   // iteration
   int rows = img_input.rows;
   int cols = img_input.cols;
-  auto start_time = std::chrono::system_clock::now();
+  // auto start_time = std::chrono::system_clock::now();
   for (int v = 0; v < rows; v += 2) {
     // row pointer
     const uchar *ptr = img_input.ptr<uchar>(v);
@@ -145,23 +154,38 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
       // double distance = sqrt(pw.x() * pw.x() + pw.y() * pw.y());
       if (fabsf64(pw.x()) > 10.0 || fabsf64(pw.y()) > 10.0)
         continue;
+      Eigen::Vector3d v_3d(r, g, b);
+      double max_similarity = 0.0;
+      int semantic_type = 0;
+      for (int i = 0; i < 5; ++i) {
+        double similarity =
+            v_3d.dot(AVPColors[i]) / v_3d.norm() / AVPColors[i].norm();
+        if (similarity > max_similarity) {
+          semantic_type = i;
+          max_similarity = similarity;
+        }
+      }
+      if (semantic_type == 0) // BACK_GROUND
+        continue;
+      if (semantic_type == 6) // SKY
+        continue;
       CloudData::POINT cloud_point;
       cloud_point.x = pw.x();
       cloud_point.y = pw.y();
       cloud_point.z = 0.0;
-      cloud_point.r = r;
-      cloud_point.b = b;
-      cloud_point.g = g;
+      cloud_point.r = AVPColors[semantic_type].x();
+      cloud_point.g = AVPColors[semantic_type].y();
+      cloud_point.b = AVPColors[semantic_type].z();
       bev_cloud_output->push_back(cloud_point);
     }
   }
-  auto end_time = std::chrono::system_clock::now();
-  LOG(INFO) << "transform loop: "
-            << double(std::chrono::duration_cast<std::chrono::microseconds>(
-                          end_time - start_time)
-                          .count()) *
-                   std::chrono::microseconds::period::num /
-                   std::chrono::microseconds::period::den;
+  // auto end_time = std::chrono::system_clock::now();
+  // LOG(INFO) << "transform loop: "
+  //           << double(std::chrono::duration_cast<std::chrono::microseconds>(
+  //                         end_time - start_time)
+  //                         .count()) *
+  //                  std::chrono::microseconds::period::num /
+  //                  std::chrono::microseconds::period::den;
   return true;
 }
 
@@ -200,9 +224,28 @@ bool CameraModel::img2BevImage(const cv::Mat &img, cv::Mat &bev_img,
       int v = pc.y() / pc.z();
       if (pc.z() < 0 || u < 0 || u >= u_max || v < 0 || v >= v_max)
         continue;
-      bev_img.at<cv::Vec3b>(row, col)[0] = img.at<cv::Vec3b>(v, u)[0];
-      bev_img.at<cv::Vec3b>(row, col)[1] = img.at<cv::Vec3b>(v, u)[1];
-      bev_img.at<cv::Vec3b>(row, col)[2] = img.at<cv::Vec3b>(v, u)[2];
+
+      int b = img.at<cv::Vec3b>(v, u)[0];
+      int g = img.at<cv::Vec3b>(v, u)[1];
+      int r = img.at<cv::Vec3b>(v, u)[2];
+      Eigen::Vector3d v_3d(r, g, b);
+      double max_similarity = 0.0;
+      int semantic_type = 0;
+      for (int i = 0; i < 7; ++i) {
+        double similarity =
+            v_3d.dot(AVPColors[i]) / v_3d.norm() / AVPColors[i].norm();
+        if (similarity > max_similarity) {
+          semantic_type = i;
+          max_similarity = similarity;
+        }
+      }
+      if (max_similarity < simi_thre_)
+        semantic_type = AVPLabels::ROAD;
+      if (semantic_type == 6) // SKY
+        continue;
+      bev_img.at<cv::Vec3b>(row, col)[0] = AVPColors[semantic_type].z();
+      bev_img.at<cv::Vec3b>(row, col)[1] = AVPColors[semantic_type].y();
+      bev_img.at<cv::Vec3b>(row, col)[2] = AVPColors[semantic_type].x();
     }
   }
 

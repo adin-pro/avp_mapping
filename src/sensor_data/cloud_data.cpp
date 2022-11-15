@@ -19,4 +19,9 @@ bool CloudData::controlDuration(std::deque<CloudData> &cloud_deque,
   return true;
 }
 
+// CloudData::CloudData(const CloudData& obj) {
+//   time = obj.time;
+//   cloud_ptr.reset(new CloudData::CLOUD(*obj.cloud_ptr));
+// }
+
 } // namespace avp_mapping

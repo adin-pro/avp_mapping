@@ -8,13 +8,13 @@
 #include "global_defination/avp_labels.hpp"
 
 namespace avp_mapping {
-std::vector<cv::Scalar> AVPColors{
-    cv::Scalar(0, 0, 0),      // ROAD
-    cv::Scalar(245, 45, 190), // LANE_LINE
-    cv::Scalar(65, 125, 255), // PARKING _LINE
-    cv::Scalar(255, 255, 0),  // MARKER
-    cv::Scalar(0, 0, 0),      // CROSSING
-    cv::Scalar(0, 0, 0),      // VEHICLE
-    cv::Scalar(0, 0, 0),      // BACKGROUND
+std::vector<Eigen::Vector3d> AVPColors{
+    Eigen::Vector3d(0, 0, 0),      // ROAD
+    Eigen::Vector3d(245, 45, 190), // LANE_LINE
+    Eigen::Vector3d(65, 125, 255), // PARKING _LINE
+    Eigen::Vector3d(255, 255, 0),  // MARKER
+    Eigen::Vector3d(79, 255, 255),      // CROSSING
+    Eigen::Vector3d(0, 0, 0),      // VEHICLE
+    Eigen::Vector3d(178, 178, 178),      // SKY
 };
 }

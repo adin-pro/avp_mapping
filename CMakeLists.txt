@@ -45,7 +45,6 @@ file(GLOB_RECURSE ALL_SRCS "*.cpp")
 file(GLOB_RECURSE NODE_SRCS "src/apps/*_node.cpp")
 list(REMOVE_ITEM ALL_SRCS ${NODE_SRCS})
 
-# message(STATUS "ALL_SRCS = ${ALL_SRCS}")
 
 add_executable(avp_data_pretreat_node src/apps/avp_data_pretreat_node.cpp ${ALL_SRCS})
 add_dependencies(avp_data_pretreat_node ${catkin_EXPORTED_TARGETS})
@@ -69,10 +68,6 @@ add_executable(avp_mapping_node src/apps/avp_mapping_node.cpp ${ALL_SRCS})
 add_dependencies(avp_mapping_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(avp_mapping_node ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
 
-# add_executable(generate_pointcloud src/apps/pointCloudFromRGB_node.cpp ${ALL_SRCS})
-# add_dependencies(generate_pointcloud ${catkin_EXPORTED_TARGETS})
-# target_link_libraries(generate_pointcloud ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
-
-
-# add_executable(generate_pointcloud src/apps/pointCloudFromRGB_node.cpp)
-# target_link_libraries(generate_pointcloud ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PCL_LIBRARIES})
+add_executable(avp_auxiliary_node src/apps/avp_auxiliary_node.cpp ${ALL_SRCS})
+add_dependencies(avp_auxiliary_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(avp_auxiliary_node ${catkin_LIBRARIES} ${ALL_TARGET_LIBRARIES})
