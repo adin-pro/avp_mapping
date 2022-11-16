@@ -65,6 +65,7 @@ replace `save_path`  in `avp_mapping/config/mapping/auxiliary.yaml` with your ow
 rosrun avp_mapping avp_auxiliary_node
 ```
 
+![alt text](pics/gt_map.png "gt map")
 
 
 

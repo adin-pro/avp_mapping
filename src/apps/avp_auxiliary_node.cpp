@@ -26,27 +26,27 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "avp_auxiliary_node");
   ros::NodeHandle nh;
   ros::Rate rate(100);
-  std::string work_path;
-  nh.param<std::string>("work_dir", work_path, "");
-  if (work_path == "") {
+  std::string work_dir;
+  nh.param<std::string>("work_dir", work_dir, "");
+  if (work_dir == "") {
     LOG(ERROR) << "Can not find work_dir ";
     return -1;
   }
 
-  YAML::Node node = YAML::Load(work_path + "/config/mapping/auxiliary.yaml");
+  YAML::Node node = YAML::LoadFile(work_dir + "/config/mapping/auxiliary.yaml");
 
-  std::string save_path = node["save_path"].as<std::string>();
+  std::string work_path = node["save_path"].as<std::string>();
 
-  if (!FileManager::CreateDirectory(save_path + "/slam_data/")) {
+  if (!FileManager::CreateDirectory(work_path + "/slam_data/")) {
     return false;
   }
-  if (!FileManager::CreateDirectory(save_path + "/slam_data/image/")) {
+  if (!FileManager::CreateDirectory(work_path + "/slam_data/image/")) {
     return false;
   }
-  if (!FileManager::CreateDirectory(save_path + "/slam_data/cloud/")) {
+  if (!FileManager::CreateDirectory(work_path + "/slam_data/cloud/")) {
     return false;
   }
-  if (!FileManager::CreateDirectory(save_path + "/slam_data/submap/")) {
+  if (!FileManager::CreateDirectory(work_path + "/slam_data/submap/")) {
     return false;
   }
 
