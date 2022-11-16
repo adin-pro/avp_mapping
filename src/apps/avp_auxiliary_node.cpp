@@ -12,6 +12,7 @@
 #include "pcl/common/transforms.h"
 #include "pcl/io/pcd_io.h"
 #include "ros/ros.h"
+#include "yaml-cpp/yaml.h"
 
 #include "publisher/cloud_publisher.hpp"
 #include "subscriber/cloud_subscriber.hpp"
@@ -25,24 +26,32 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "avp_auxiliary_node");
   ros::NodeHandle nh;
   ros::Rate rate(100);
-  if (argc < 2) {
-    LOG(ERROR) << "Add path of file directory";
+  std::string work_path;
+  nh.param<std::string>("work_dir", work_path, "");
+  if (work_path == "") {
+    LOG(ERROR) << "Can not find work_dir ";
+    return -1;
   }
-  std::string work_path = std::string(argv[1]);
-  if (!FileManager::CreateDirectory(work_path + "/slam_data/")) {
+
+  YAML::Node node = YAML::Load(work_path + "/config/mapping/auxiliary.yaml");
+
+  std::string save_path = node["save_path"].as<std::string>();
+
+  if (!FileManager::CreateDirectory(save_path + "/slam_data/")) {
     return false;
   }
-  if (!FileManager::CreateDirectory(work_path + "/slam_data/image/")) {
+  if (!FileManager::CreateDirectory(save_path + "/slam_data/image/")) {
     return false;
   }
-  if (!FileManager::CreateDirectory(work_path + "/slam_data/cloud/")) {
+  if (!FileManager::CreateDirectory(save_path + "/slam_data/cloud/")) {
     return false;
   }
-  if (!FileManager::CreateDirectory(work_path + "/slam_data/submap/")) {
+  if (!FileManager::CreateDirectory(save_path + "/slam_data/submap/")) {
     return false;
   }
 
-  std::ofstream out(work_path + "/slam_data/save_data.txt", std::ios::out);
+  std::ofstream odom_ofstream(work_path + "/slam_data/save_data.txt",
+                              std::ios::out);
 
   std::shared_ptr<CloudSubscriber> cloud_sub_ptr =
       std::make_shared<CloudSubscriber>(nh, "/bev/rgb_cloud", 1000);
@@ -112,7 +121,7 @@ int main(int argc, char **argv) {
       *map_cloud.cloud_ptr += *transformed_cloud;
     }
 
-    if (PoseData::isFarEnough(last_odom, curr_odom, 0.2)) {
+    if (PoseData::isFarEnough(last_odom, curr_odom, 0.5)) {
       sub_map_cloud_deque.push_back(curr_cloud);
       sub_map_pose_deque.push_back(curr_odom);
       last_odom = curr_odom;
@@ -146,7 +155,7 @@ int main(int argc, char **argv) {
         // clear sub map
         sub_map.cloud_ptr->clear();
         CloudData::CLOUD_PTR transformed_sub_cloud(new CloudData::CLOUD());
-        for (int si = 0; si < sub_map_cloud_deque.size(); si++) {
+        for (size_t si = 0; si < sub_map_cloud_deque.size(); si++) {
           transformed_sub_cloud->clear();
           LOG(INFO) << sub_map_cloud_deque[si].time;
           pcl::transformPointCloud(*sub_map_cloud_deque[si].cloud_ptr,
@@ -161,7 +170,8 @@ int main(int argc, char **argv) {
         num_cloud_data_for_pop = sub_map_cnt;
         sub_map_cnt = 0;
         pcl::io::savePCDFileBinary(work_path + "/slam_data/submap/" +
-                                       std::to_string(keyframe_cnt-1) + ".pcd",
+                                       std::to_string(keyframe_cnt - 1) +
+                                       ".pcd",
                                    *sub_map.cloud_ptr);
         sub_cloud_pub_ptr->publish(sub_map.cloud_ptr);
       }
@@ -169,9 +179,10 @@ int main(int argc, char **argv) {
       // save odom
       key_frame_pose_deque.push_back(curr_odom);
       auto q = curr_odom.getQuaternion();
-      out << curr_odom.time << " " << curr_odom.pose(0, 3) << " "
-          << curr_odom.pose(1, 3) << " " << curr_odom.pose(2, 3) << " " << q.x()
-          << " " << q.y() << " " << q.z() << " " << q.w() << std::endl;
+      odom_ofstream << curr_odom.time << " " << curr_odom.pose(0, 3) << " "
+                    << curr_odom.pose(1, 3) << " " << curr_odom.pose(2, 3)
+                    << " " << q.x() << " " << q.y() << " " << q.z() << " "
+                    << q.w() << std::endl;
       last_key_frame_odom = curr_odom;
       LOG(INFO) << "KeyFrame " << keyframe_cnt
                 << " saved. Timestamp: " << curr_odom.time;

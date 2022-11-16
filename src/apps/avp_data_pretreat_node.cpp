@@ -6,8 +6,8 @@
  */
 
 #include <signal.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "glog/logging.h"
@@ -18,9 +18,8 @@
 
 using namespace avp_mapping;
 
-
 void exit_logger(int s) {
-  std::cout <<  "\ncatch ctrl^C, system will exit" << std::endl;
+  std::cout << "\ncatch ctrl^C, system will exit" << std::endl;
   _exit(1);
 }
 
@@ -33,8 +32,15 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh;
   ros::Rate rate(100);
 
+  std::string work_dir;
+  nh.param<std::string>("work_dir", work_dir, "");
+  if (work_dir == "") {
+    LOG(ERROR) << "Can not find work_dir ";
+    return -1;
+  }
+
   std::shared_ptr<DataPretreatFlow> data_pretreat_flow_ptr =
-      std::make_shared<DataPretreatFlow>(nh);
+      std::make_shared<DataPretreatFlow>(nh, work_dir);
 
   while (ros::ok()) {
     ros::spinOnce();

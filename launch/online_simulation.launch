@@ -1,0 +1,14 @@
+<launch>
+
+    <!-- load Parameters -->
+    <rosparam file="$(find avp_mapping)/config/global_config.yaml" command="load" />
+
+    <!-- simulation environment and robot -->
+    <include file="$(find avp_mapping)/launch/robot_with_cameras.launch" />
+
+    <!-- visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" 
+          args="-d $(find avp_mapping)/rviz/avp_mapping.rviz" 
+          required="true" />
+    
+</launch>

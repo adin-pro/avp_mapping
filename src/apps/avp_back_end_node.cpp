@@ -6,6 +6,7 @@
  */
 
 #include "mapping/back_end/back_end_flow.hpp"
+#include "glog/logging.h"
 
 using namespace avp_mapping;
 
@@ -14,7 +15,12 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh;
   ros::Rate r(100);
 
-  std::string work_dir = "/home/adin/catkin_ws/src/avp_mapping/";
+  std::string work_dir;
+  nh.param<std::string>("work_dir", work_dir, "");
+  if (work_dir == "") {
+    LOG(ERROR) << "Can not find work_dir ";
+    return -1;
+  }
   std::string cloud_topic = "/bev/rgb_cloud";
   std::string odom_topic = "/vidar_odom";
 

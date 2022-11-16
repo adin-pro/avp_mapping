@@ -1,0 +1,10 @@
+<launch>
+    <!-- load Parameters -->
+    <rosparam file="$(find avp_mapping)/config/global_config.yaml" command="load" />
+    <!-- visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" 
+          args="-d $(find avp_mapping)/rviz/avp_mapping.rviz" 
+          required="true" />
+    <node name="avp_data_pretreat_node" pkg="avp_mapping" type="avp_data_pretreat_node" ></node> 
+    <node name="avp_auxiliary_node" pkg="avp_mapping" type="avp_auxiliary_node" ></node> 
+</launch>

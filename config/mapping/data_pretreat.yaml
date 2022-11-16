@@ -1,1 +1,22 @@
-similarity_thre: 0.995
+: 0.995
+# topics
+image_topic: /color/image_raw
+image_pub_topic: /bev/image
+cloud_pub_topic: /bev/rgb_cloud
+
+# bev_image
+image_scale: 0.05
+image_width: 280
+image_height: 280
+
+
+camera_model:
+  fx: 476.70143780997665
+  fy: 476.70143780997665
+  cx: 399.5
+  cy: 399.5
+  similarity_thre: 0.995
+  valid_cloud_range: 8.0
+
+voxel_filter:
+  leaf_size: [0.1, 0.1, 0.1]

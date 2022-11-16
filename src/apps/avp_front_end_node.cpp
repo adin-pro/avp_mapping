@@ -6,6 +6,7 @@
  */
 
 #include "mapping/front_end/front_end_flow.hpp"
+#include "glog/logging.h"
 
 using namespace avp_mapping;
 
@@ -16,6 +17,13 @@ int main(int argc, char **argv) {
 
   std::string cloud_topic = "/bev/rgb_cloud";
   std::string odom_pub_topic = "/vidar_odom";
+
+  std::string work_dir;
+  nh.param<std::string>("work_dir", work_dir, "");
+  if (work_dir == "") {
+    LOG(ERROR) << "Can not find work_dir ";
+    return -1;
+  }
 
   std::shared_ptr<FrontEndFlow> front_end_ptr =
       std::make_shared<FrontEndFlow>(nh, cloud_topic, odom_pub_topic);

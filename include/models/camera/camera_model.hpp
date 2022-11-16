@@ -22,17 +22,13 @@ class CameraModel {
 public:
   CameraModel() = default;
 
-  CameraModel(YAML::Node &node);
+  CameraModel(const YAML::Node &node);
 
   CameraModel(float fx, float fy, float cx, float cy);
 
   bool img2BevCloud(const cv::Mat &img_input,
                     CloudData::CLOUD_PTR &bev_cloud_output,
                     const Eigen::Matrix4f &camera_to_base);
-
-  bool img2BevCloudWrapper(const cv::Mat &img_input,
-                           CloudData::CLOUD_PTR &bev_cloud_output,
-                           const Eigen::Matrix4f &camera_to_base);
 
   bool img2BevImage(const cv::Mat &img_input, cv::Mat &img_output,
                     Eigen::Matrix4f &base2cam, float scale = 0.05);
@@ -51,6 +47,7 @@ private:
   Eigen::Matrix3f axis_trans_ =
       (Eigen::Matrix3f() << 0, 0, 1, -1, 0, 0, 0, -1, 0).finished();
   double simi_thre_;
+  double valid_cloud_range_;
 };
 
 } // namespace avp_mapping

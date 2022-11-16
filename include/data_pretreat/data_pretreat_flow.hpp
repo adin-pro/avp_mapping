@@ -31,7 +31,7 @@ namespace avp_mapping {
 class DataPretreatFlow {
 
 public:
-  DataPretreatFlow(ros::NodeHandle &nh);
+  DataPretreatFlow(ros::NodeHandle &nh, std::string work_dir);
 
   bool run();
 
@@ -99,6 +99,10 @@ private:
   CameraModel camera_;
 
   double img_sync_time_ = 0.0;
+
+  float scale_ = 0.05;
+  int image_width_ = 280;
+  int image_height_ = 280;
 
   std::shared_ptr<CloudFilterInterface> filter_ptr_;
 

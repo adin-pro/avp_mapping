@@ -1,0 +1,138 @@
+<sdf version='1.6'>
+  <world name='default'>
+    <!--光线条件-->
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.5 -1</direction>
+    </light>
+    <!--重力、磁场，此处均为默认值-->
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <!--热力条件，绝热环境-->
+    <atmosphere type='adiabatic'/>
+    <!--动态引擎设置，仿真步长，仿真时间速率，更新速度，此处均为默认值-->
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <!--场景可视化颜色设置-->
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <!--球坐标设置，与GNSS相关的坐标，默认GNU，默认原点为GNSS零点-->
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <!--一个world中可以有多个model，name需要唯一-->
+    <model name='my_ground_plane'>
+      <!--不可移动-->
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <!--plane/box/sphere/mesh shape-->
+            <plane>
+              <normal>0 0 1</normal>
+              <size>120 90</size>
+            </plane>
+          </geometry>
+          <!--物体表面的物理属性-->
+          <surface>
+            <friction>
+              <!--物理引擎ode-->
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <!--扭转属性-->
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <!--contact和bounce这边都是默认的-->
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <!--不会投射阴影-->
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>120 90</size>
+            </plane>
+          </geometry>
+          <!--一个visual里只允许有一个material-->
+          <material>
+            <script>
+              <uri>model://parklot/materials/scripts</uri>
+              <uri>model://parklot/materials/textures/</uri>
+              <name>MyGroundPlane/Image</name>
+            </script>
+          </material>
+        </visual>
+        <!--不能与model内其他link碰撞-->
+        <self_collide>0</self_collide>
+        <!--不具备运动学属性？-->
+        <kinematic>0</kinematic>
+        <!--受到重力影响-->
+        <gravity>1</gravity>
+        <!--不受到风力影响-->
+        <enable_wind>0</enable_wind>
+      </link>
+      <pose frame=''>0.014768 10.7632 0 0 -0 0</pose>
+    </model>
+    <!--描述哪个world-->
+    <state world_name='default'>
+      <!--seconds nanoseconds-->
+      <sim_time>1825 798000000</sim_time>
+      <real_time>77 469693567</real_time>
+      <wall_time>1639796491 598605842</wall_time>
+      <iterations>76635</iterations>
+      <model name='my_ground_plane'>
+        <pose frame=''>0.014768 0.007632 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.014768 10.7632 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose frame=''>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>0 0 60.8424 0 1.57 0</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+    <audio>
+      <device>default</device>
+    </audio>
+    <wind/>
+  </world>
+</sdf>
