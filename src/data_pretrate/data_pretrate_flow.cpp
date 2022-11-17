@@ -21,7 +21,9 @@ DataPretreatFlow::DataPretreatFlow(ros::NodeHandle &nh, std::string work_dir) {
   std::string image_topic = node["image_topic"].as<std::string>();
   std::string image_pub_topic = node["image_pub_topic"].as<std::string>();
   std::string cloud_pub_topic = node["cloud_pub_topic"].as<std::string>();
-  
+  std::string cloud_with_heigth_pub_topic =
+      node["cloud_with_heigth_pub_topic"].as<std::string>();
+
   // bev_image
   scale_ = node["image_scale"].as<float>();
   image_height_ = node["image_height"].as<int>();
@@ -62,12 +64,15 @@ DataPretreatFlow::DataPretreatFlow(ros::NodeHandle &nh, std::string work_dir) {
       std::make_shared<ImagePublisher>(nh, image_pub_topic, "/map", 100);
   cloud_pub_ptr_ =
       std::make_shared<CloudPublisher>(nh, cloud_pub_topic, "/map", 100);
+  cloud_with_height_pub_ptr_ =
+      std::make_shared<CloudPublisher>(nh, cloud_with_heigth_pub_topic, "/map", 100);
 
   camera_ = CameraModel(node["camera_model"]);
 
   filter_ptr_ = std::make_shared<VoxelFilter>(node["voxel_filter"]);
 
   bev_cloud_ptr_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
+  bev_cloud_with_height_out_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
   filtered_bev_cloud_ptr_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
 }
 
@@ -169,7 +174,8 @@ bool DataPretreatFlow::pop_image_data() {
 }
 
 bool DataPretreatFlow::publishData() {
-  cv::Mat bev_image(cv::Size(image_height_, image_width_), CV_8UC3, cv::Scalar(0, 0, 0));
+  cv::Mat bev_image(cv::Size(image_height_, image_width_), CV_8UC3,
+                    cv::Scalar(0, 0, 0));
   camera_.img2BevImage(img_data_buff_0_.front().image, bev_image,
                        base_to_camera0_, scale_);
   camera_.img2BevImage(img_data_buff_1_.front().image, bev_image,
@@ -186,24 +192,26 @@ bool DataPretreatFlow::publishData() {
 
   // point cloud
   bev_cloud_ptr_->clear();
+  bev_cloud_with_height_out_->clear();
   camera_.img2BevCloud(img_data_buff_0_.front().image, bev_cloud_ptr_,
-                       base_to_camera0_);
+                       bev_cloud_with_height_out_, base_to_camera0_);
   camera_.img2BevCloud(img_data_buff_1_.front().image, bev_cloud_ptr_,
-                       base_to_camera1_);
+                       bev_cloud_with_height_out_, base_to_camera1_);
   camera_.img2BevCloud(img_data_buff_2_.front().image, bev_cloud_ptr_,
-                       base_to_camera2_);
+                       bev_cloud_with_height_out_, base_to_camera2_);
   camera_.img2BevCloud(img_data_buff_3_.front().image, bev_cloud_ptr_,
-                       base_to_camera3_);
+                       bev_cloud_with_height_out_, base_to_camera3_);
   camera_.img2BevCloud(img_data_buff_4_.front().image, bev_cloud_ptr_,
-                       base_to_camera4_);
+                       bev_cloud_with_height_out_, base_to_camera4_);
   camera_.img2BevCloud(img_data_buff_5_.front().image, bev_cloud_ptr_,
-                       base_to_camera5_);
+                       bev_cloud_with_height_out_, base_to_camera5_);
   // filter
   filtered_bev_cloud_ptr_->clear();
   LOG(INFO) << "bev ipm cloud: " << bev_cloud_ptr_->points.size();
   filter_ptr_->filter(bev_cloud_ptr_, filtered_bev_cloud_ptr_);
   LOG(INFO) << "filtered ipm cloud: " << filtered_bev_cloud_ptr_->points.size();
   cloud_pub_ptr_->publish(bev_cloud_ptr_, img_sync_time_);
+  cloud_with_height_pub_ptr_->publish(bev_cloud_with_height_out_, img_sync_time_);
   pop_image_data();
 
   return true;

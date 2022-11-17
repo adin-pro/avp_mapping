@@ -64,6 +64,7 @@ private:
 
   // publisher
   std::shared_ptr<CloudPublisher> cloud_pub_ptr_;
+  std::shared_ptr<CloudPublisher> cloud_with_height_pub_ptr_;
   std::shared_ptr<ImagePublisher> img_pub_ptr_;
   std::shared_ptr<TFBroadCaster> tfbroad_pub_ptr_;
   std::shared_ptr<OdometryPublisher> odom_pub_ptr_;
@@ -108,6 +109,7 @@ private:
 
   CloudData::CLOUD_PTR bev_cloud_ptr_;
   CloudData::CLOUD_PTR filtered_bev_cloud_ptr_;
+  CloudData::CLOUD_PTR bev_cloud_with_height_out_;
 };
 
 } // namespace avp_mapping

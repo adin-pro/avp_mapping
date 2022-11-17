@@ -22,6 +22,8 @@ CameraModel::CameraModel(const YAML::Node &node) {
   cy_ = node["cy"].as<float>();
   simi_thre_ = node["similarity_thre"].as<double>();
   valid_cloud_range_ = node["valid_cloud_range"].as<double>();
+  semantic_height_ = node["semantic_height"].as<double>();
+
   K_(0, 0) = fx_;
   K_(1, 1) = fy_;
   K_(0, 2) = cx_;
@@ -30,9 +32,9 @@ CameraModel::CameraModel(const YAML::Node &node) {
   K_inv_ = K_.inverse();
 }
 
-
 bool CameraModel::img2BevCloud(const cv::Mat &img_input,
                                CloudData::CLOUD_PTR &bev_cloud_output,
+                               CloudData::CLOUD_PTR &bev_cloud_with_height_out,
                                const Eigen::Matrix4f &base2cam) {
   // extrinsic
   Eigen::Matrix3f base2cam_mat33;
@@ -43,7 +45,6 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
   // iteration
   int rows = img_input.rows;
   int cols = img_input.cols;
-  // auto start_time = std::chrono::system_clock::now();
   for (int v = 0; v < rows; v += 2) {
     // row pointer
     const uchar *ptr = img_input.ptr<uchar>(v);
@@ -94,6 +95,14 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
       cloud_point.g = AVPColors[semantic_type].y();
       cloud_point.b = AVPColors[semantic_type].z();
       bev_cloud_output->push_back(cloud_point);
+      CloudData::POINT cloud_point_height;
+      cloud_point_height.x = pw.x();
+      cloud_point_height.y = pw.y();
+      cloud_point_height.z = semantic_height_ * semantic_type;
+      cloud_point_height.r = AVPColors[semantic_type].x();
+      cloud_point_height.g = AVPColors[semantic_type].y();
+      cloud_point_height.b = AVPColors[semantic_type].z();
+      bev_cloud_with_height_out->push_back(cloud_point_height);
     }
   }
   return true;

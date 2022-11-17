@@ -28,6 +28,7 @@ public:
 
   bool img2BevCloud(const cv::Mat &img_input,
                     CloudData::CLOUD_PTR &bev_cloud_output,
+                    CloudData::CLOUD_PTR &bev_cloud_with_height_out,
                     const Eigen::Matrix4f &camera_to_base);
 
   bool img2BevImage(const cv::Mat &img_input, cv::Mat &img_output,
@@ -48,6 +49,7 @@ private:
       (Eigen::Matrix3f() << 0, 0, 1, -1, 0, 0, 0, -1, 0).finished();
   double simi_thre_;
   double valid_cloud_range_;
+  double semantic_height_;
 };
 
 } // namespace avp_mapping
