@@ -75,7 +75,7 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
       Eigen::Vector3d v_3d(r, g, b);
       double max_similarity = 0.0;
       int semantic_type = 0;
-      for (int i = 0; i < 5; ++i) {
+      for (size_t i = 0; i < AVPColors.size(); ++i) {
         double similarity =
             v_3d.dot(AVPColors[i]) / v_3d.norm() / AVPColors[i].norm();
         if (similarity > max_similarity) {
@@ -150,12 +150,14 @@ bool CameraModel::img2BevImage(const cv::Mat &img, cv::Mat &bev_img,
       Eigen::Vector3d v_3d(r, g, b);
       double max_similarity = 0.0;
       int semantic_type = 0;
-      for (int i = 0; i < 7; ++i) {
+      for (size_t i = 0; i < AVPColors.size(); ++i) {
         double similarity =
             v_3d.dot(AVPColors[i]) / v_3d.norm() / AVPColors[i].norm();
         if (similarity > max_similarity) {
           semantic_type = i;
           max_similarity = similarity;
+          if (similarity > simi_thre_)
+            break;
         }
       }
       if (max_similarity < simi_thre_)

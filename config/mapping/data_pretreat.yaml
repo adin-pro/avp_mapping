@@ -7,8 +7,8 @@ cloud_with_heigth_pub_topic: /bev/rgb_cloud_height
 
 # bev_image
 image_scale: 0.05
-image_width: 280
-image_height: 280
+image_width: 400
+image_height: 400
 
 
 camera_model:
@@ -16,8 +16,8 @@ camera_model:
   fy: 476.70143780997665
   cx: 399.5
   cy: 399.5
-  similarity_thre: 0.995
-  valid_cloud_range: 8.0
+  similarity_thre: 0.98
+  valid_cloud_range: 10.0
   semantic_height: 1.0
 
 voxel_filter:

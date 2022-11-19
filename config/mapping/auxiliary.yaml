@@ -1,2 +1,4 @@
 save_path: "/home/adin/extra"
-
+frame_dist: 0.4
+key_frame_dist: 2.0
+control_duration: 20.0

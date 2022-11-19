@@ -13,13 +13,15 @@
 
 namespace avp_mapping {
 enum AVPLabels {
-  ROAD = 0,
-  LANE_LINE = 1,
-  PARKING_LINE = 2,
-  MARKER = 3,
-  CROSSING = 4,
-  VEHICLE = 5,
-  BACKGROUND = 6,
+  BACKGROUND = 0,
+  ROAD = 1,
+  LANE_LINE = 2,
+  PARKING_LINE = 3,
+  MARKER = 4,
+  CROSSING = 5,
+  VEHICLE = 6,
+  BUMP = 7,
+  STOP_LINE = 8
 };
 
 extern std::vector<Eigen::Vector3d> AVPColors;
