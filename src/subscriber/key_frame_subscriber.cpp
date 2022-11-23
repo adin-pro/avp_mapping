@@ -26,7 +26,7 @@ void KeyFrameSubscriber::msg_callback(
   kf.pose(1, 3) = key_frame_msg_ptr->pose.pose.position.y;
   kf.pose(2, 3) = key_frame_msg_ptr->pose.pose.position.z;
 
-  Eigen::Quaternionf q;
+  Eigen::Quaterniond q;
   q.x() = key_frame_msg_ptr->pose.pose.orientation.x;
   q.y() = key_frame_msg_ptr->pose.pose.orientation.y;
   q.z() = key_frame_msg_ptr->pose.pose.orientation.z;

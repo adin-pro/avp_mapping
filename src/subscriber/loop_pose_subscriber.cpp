@@ -30,7 +30,7 @@ void LoopPoseSubscriber::msg_callback(
   loop_pose.pose(1, 3) = loop_pose_msg_ptr->pose.pose.position.y;
   loop_pose.pose(2, 3) = loop_pose_msg_ptr->pose.pose.position.z;
 
-  Eigen::Quaternionf q;
+  Eigen::Quaterniond q;
   q.x() = loop_pose_msg_ptr->pose.pose.orientation.x;
   q.y() = loop_pose_msg_ptr->pose.pose.orientation.y;
   q.z() = loop_pose_msg_ptr->pose.pose.orientation.z;

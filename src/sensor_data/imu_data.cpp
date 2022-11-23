@@ -7,10 +7,10 @@
 #include "sensor_data/imu_data.hpp"
 
 namespace avp_mapping {
-Eigen::Matrix3f IMUData::getOrientationMatrix() {
+Eigen::Matrix3d IMUData::getOrientationMatrix() {
   Eigen::Quaterniond q(orientation.x, orientation.y, orientation.z,
                        orientation.w);
-  Eigen::Matrix3f matrix = q.matrix().cast<float>();
+  Eigen::Matrix3d matrix = q.matrix();
   return matrix;
 }
 

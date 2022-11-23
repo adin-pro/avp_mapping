@@ -30,7 +30,7 @@ void KeyFramesSubscriber::msg_callback(
     kf.pose(0, 3) = key_frames_msg_ptr->poses.at(i).pose.position.x;
     kf.pose(1, 3) = key_frames_msg_ptr->poses.at(i).pose.position.y;
     kf.pose(2, 3) = key_frames_msg_ptr->poses.at(i).pose.position.z;
-    Eigen::Quaternionf q;
+    Eigen::Quaterniond q;
     q.x() = key_frames_msg_ptr->poses.at(i).pose.orientation.x;
     q.y() = key_frames_msg_ptr->poses.at(i).pose.orientation.x;
     q.z() = key_frames_msg_ptr->poses.at(i).pose.orientation.x;

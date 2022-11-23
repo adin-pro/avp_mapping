@@ -12,8 +12,8 @@
 
 namespace avp_mapping {
 
-Eigen::Quaternionf PoseData::getQuaternion() {
-  Eigen::Quaternionf q;
+Eigen::Quaterniond PoseData::getQuaternion() {
+  Eigen::Quaterniond q;
   q = pose.block<3, 3>(0, 0);
   return q;
 }
@@ -56,9 +56,9 @@ bool PoseData::syncData(std::deque<PoseData> &unsyncedData,
       front_data.pose(1, 3) * front_scale + back_data.pose(1, 3) * back_scale;
   synced_data.pose(2, 3) =
       front_data.pose(2, 3) * front_scale + back_data.pose(2, 3) * back_scale;
-  Eigen::Quaternionf qf = front_data.getQuaternion();
-  Eigen::Quaternionf qb = back_data.getQuaternion();
-  Eigen::Quaternionf q;
+  Eigen::Quaterniond qf = front_data.getQuaternion();
+  Eigen::Quaterniond qb = back_data.getQuaternion();
+  Eigen::Quaterniond q;
   q.x() = qf.x() * front_scale + qb.x() * back_scale;
   q.y() = qf.y() * front_scale + qb.y() * back_scale;
   q.z() = qf.z() * front_scale + qb.z() * back_scale;

@@ -14,11 +14,11 @@
 namespace avp_mapping {
 class PoseData {
 public:
-  Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4d pose = Eigen::Matrix4f::Identity();
   double time = 0.0;
 
 public:
-  Eigen::Quaternionf getQuaternion();
+  Eigen::Quaterniond getQuaternion();
   static bool syncData(std::deque<PoseData> &unsyncedData,
                        std::deque<PoseData> &syncedData, double sync_time);
   static bool syncDataWithoutInterpolation(std::deque<PoseData> &unsyncedData,

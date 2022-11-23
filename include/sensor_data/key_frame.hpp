@@ -15,10 +15,10 @@ class KeyFrame {
 public:
   double time = 0.0;
   unsigned int index = 0;
-  Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4d pose = Eigen::Matrix4d::Identity();
 
 public:
-  Eigen::Quaternionf getQuaternion();
+  Eigen::Quaterniond getQuaternion();
 };
 } // namespace avp_mapping
 

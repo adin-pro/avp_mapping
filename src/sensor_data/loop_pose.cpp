@@ -8,8 +8,8 @@
 #include "sensor_data/loop_pose.hpp"
 
 namespace avp_mapping {
-  Eigen::Quaternionf LoopPose::getQuaternion() {
-    Eigen::Quaternionf q;
+  Eigen::Quaterniond LoopPose::getQuaternion() {
+    Eigen::Quaterniond q;
     q = pose.block<3,3>(0,0);
     return q;
   }

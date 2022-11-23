@@ -51,7 +51,7 @@ public:
 
 public:
   // 把四元数转换成旋转矩阵送出去
-  Eigen::Matrix3f getOrientationMatrix();
+  Eigen::Matrix3d getOrientationMatrix();
   static bool syncData(std::deque<IMUData> &UnsyncedData,
                        std::deque<IMUData> &SyncedData, double sync_time);
 };

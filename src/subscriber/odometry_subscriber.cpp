@@ -25,7 +25,7 @@ void OdometrySubscriber::msg_callback(
   pose_data.pose(1, 3) = odom_msg_ptr->pose.pose.position.y;
   pose_data.pose(2, 3) = odom_msg_ptr->pose.pose.position.z;
 
-  Eigen::Quaternionf q;
+  Eigen::Quaterniond q;
   q.x() = odom_msg_ptr->pose.pose.orientation.x;
   q.y() = odom_msg_ptr->pose.pose.orientation.y;
   q.z() = odom_msg_ptr->pose.pose.orientation.z;
