@@ -33,7 +33,7 @@ public:
 public:
   static bool syncData(std::deque<VelocityData> &UnsyncedData,
                        std::deque<VelocityData> &SyncedData, double sync_time);
-  void transformCoordinate(Eigen::Matrix4f transform_matrix);
+  void transformCoordinate(Eigen::Matrix4d transform_matrix);
 };
 } // namespace avp_mapping
 

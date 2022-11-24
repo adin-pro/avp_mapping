@@ -22,11 +22,11 @@ public:
   TFListener(ros::NodeHandle &nh, std::string base_frame_id,
              std::string child_frame_id);
 
-  bool lookUpData(Eigen::Matrix4f &transform_matrix);
+  bool lookUpData(Eigen::Matrix4d &transform_matrix);
 
 private:
   bool transformToMatrix(const tf::StampedTransform &transform,
-                         Eigen::Matrix4f &transform_matrix);
+                         Eigen::Matrix4d &transform_matrix);
 
 private:
   ros::NodeHandle nh_;

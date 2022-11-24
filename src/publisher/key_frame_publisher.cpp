@@ -27,7 +27,7 @@ void KeyFramePublisher::publish(KeyFrame &kf) {
   pose_stamped.pose.pose.position.y = kf.pose(1, 3);
   pose_stamped.pose.pose.position.z = kf.pose(2, 3);
 
-  Eigen::Quaternionf q = kf.getQuaternion();
+  Eigen::Quaterniond q = kf.getQuaternion();
   pose_stamped.pose.pose.orientation.x = q.x();
   pose_stamped.pose.pose.orientation.y = q.y();
   pose_stamped.pose.pose.orientation.z = q.z();

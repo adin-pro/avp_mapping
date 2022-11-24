@@ -37,20 +37,20 @@ private:
   bool detectNearestKeyFrame(int &key_frame_index);
   bool cloudRegistration(int key_frame_index);
   bool jointMap(int key_frame_index, CloudData::CLOUD_PTR &map_cloud_ptr,
-                Eigen::Matrix4f &map_pose);
+                Eigen::Matrix4d &map_pose);
   bool jointScan(CloudData::CLOUD_PTR &scan_cloud_ptr,
-                 Eigen::Matrix4f &scan_pose);
+                 Eigen::Matrix4d &scan_pose);
   bool registration(CloudData::CLOUD_PTR &map_cloud_ptr,
                     CloudData::CLOUD_PTR &scan_cloud_ptr,
-                    Eigen::Matrix4f &scan_pose, Eigen::Matrix4f &result_pose);
+                    Eigen::Matrix4d &scan_pose, Eigen::Matrix4d &result_pose);
 
 private:
   std::string key_frame_path_ = "";
   int extend_frame_num_ = 3;
   int loop_step_ = 10;
   int diff_num_ = 100;
-  float detect_area_ = 10.0;
-  float fitness_score_limit_ = 2.0;
+  double detect_area_ = 10.0;
+  double fitness_score_limit_ = 2.0;
 
   std::shared_ptr<CloudFilterInterface> scan_filter_ptr_;
   std::shared_ptr<CloudFilterInterface> map_filter_ptr_;

@@ -20,7 +20,7 @@ class TFBroadCaster {
 public:
   TFBroadCaster() = default;
   TFBroadCaster(std::string frame_id, std::string child_frame_id);
-  void sendTransform(Eigen::Matrix4f pose, double time);
+  void sendTransform(Eigen::Matrix4d pose, double time);
 
 protected:
   tf::StampedTransform transform_;

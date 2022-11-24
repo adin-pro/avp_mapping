@@ -16,10 +16,10 @@
 namespace avp_mapping {
 
 CameraModel::CameraModel(const YAML::Node &node) {
-  fx_ = node["fx"].as<float>();
-  fy_ = node["fy"].as<float>();
-  cx_ = node["cx"].as<float>();
-  cy_ = node["cy"].as<float>();
+  fx_ = node["fx"].as<double>();
+  fy_ = node["fy"].as<double>();
+  cx_ = node["cx"].as<double>();
+  cy_ = node["cy"].as<double>();
   simi_thre_ = node["similarity_thre"].as<double>();
   valid_cloud_range_ = node["valid_cloud_range"].as<double>();
   semantic_height_ = node["semantic_height"].as<double>();
@@ -35,13 +35,13 @@ CameraModel::CameraModel(const YAML::Node &node) {
 bool CameraModel::img2BevCloud(const cv::Mat &img_input,
                                CloudData::CLOUD_PTR &bev_cloud_output,
                                CloudData::CLOUD_PTR &bev_cloud_with_height_out,
-                               const Eigen::Matrix4f &base2cam) {
+                               const Eigen::Matrix4d &base2cam) {
   // extrinsic
-  Eigen::Matrix3f base2cam_mat33;
+  Eigen::Matrix3d base2cam_mat33;
   base2cam_mat33 << base2cam(0, 0), base2cam(0, 1), base2cam(0, 3),
       base2cam(1, 0), base2cam(1, 1), base2cam(1, 3), base2cam(2, 0),
       base2cam(2, 1), base2cam(2, 3);
-  Eigen::Matrix3f cam2base = base2cam_mat33.inverse();
+  Eigen::Matrix3d cam2base = base2cam_mat33.inverse();
   // iteration
   int rows = img_input.rows;
   int cols = img_input.cols;
@@ -59,12 +59,12 @@ bool CameraModel::img2BevCloud(const cv::Mat &img_input,
       if (b == 178)
         break;
       // point of pixel
-      Eigen::Vector3f pp;
+      Eigen::Vector3d pp;
       pp(0) = u;
       pp(1) = v;
       pp(2) = 1.0;
       // point in world coordinate
-      Eigen::Vector3f pw = cam2base * axis_trans_ * K_inv_ * pp;
+      Eigen::Vector3d pw = cam2base * axis_trans_ * K_inv_ * pp;
       // convert pw to homogeneous coordinates
       pw(0) /= pw(2);
       pw(1) /= pw(2);
@@ -118,17 +118,17 @@ images
 */
 
 bool CameraModel::img2BevImage(const cv::Mat &img, cv::Mat &bev_img,
-                               Eigen::Matrix4f &base2cam, float scale) {
+                               Eigen::Matrix4d &base2cam, double scale) {
 
   int rows = bev_img.rows;
   int cols = bev_img.cols;
   int u_max = img.cols;
   int v_max = img.rows;
-  Eigen::Matrix3f rot = base2cam.block<3, 3>(0, 0);
-  Eigen::Vector3f trans = base2cam.block<3, 1>(0, 3);
-  Eigen::Vector3f pw; // world coordinate
-  Eigen::Vector3f pc; // camera coordinate
-  Eigen::Matrix3f axis_base_2_cam;
+  Eigen::Matrix3d rot = base2cam.block<3, 3>(0, 0);
+  Eigen::Vector3d trans = base2cam.block<3, 1>(0, 3);
+  Eigen::Vector3d pw; // world coordinate
+  Eigen::Vector3d pc; // camera coordinate
+  Eigen::Matrix3d axis_base_2_cam;
   axis_base_2_cam << 0, -1, 0, 0, 0, -1, 1, 0, 0;
 
   for (int row = 0; row < rows; ++row) {
@@ -178,6 +178,6 @@ bool imgSegmentation(ImageData &img_raw, ImageData &img_segmented) {
   return true;
 }
 
-Eigen::Matrix3f CameraModel::getIntrinsic() { return K_; }
+Eigen::Matrix3d CameraModel::getIntrinsic() { return K_; }
 
 } // namespace avp_mapping

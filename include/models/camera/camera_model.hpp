@@ -24,29 +24,29 @@ public:
 
   CameraModel(const YAML::Node &node);
 
-  CameraModel(float fx, float fy, float cx, float cy);
+  CameraModel(double fx, double fy, double cx, double cy);
 
   bool img2BevCloud(const cv::Mat &img_input,
                     CloudData::CLOUD_PTR &bev_cloud_output,
                     CloudData::CLOUD_PTR &bev_cloud_with_height_out,
-                    const Eigen::Matrix4f &camera_to_base);
+                    const Eigen::Matrix4d &camera_to_base);
 
   bool img2BevImage(const cv::Mat &img_input, cv::Mat &img_output,
-                    Eigen::Matrix4f &base2cam, float scale = 0.05);
+                    Eigen::Matrix4d &base2cam, double scale = 0.05);
 
-  Eigen::Matrix3f getIntrinsic();
+  Eigen::Matrix3d getIntrinsic();
 
 private:
   bool imgSegmentation(ImageData &img_raw, ImageData &img_segmented);
 
-  float fx_;
-  float fy_;
-  float cx_;
-  float cy_;
-  Eigen::Matrix3f K_ = Eigen::Matrix3f::Identity();
-  Eigen::Matrix3f K_inv_ = Eigen::Matrix3f::Identity();
-  Eigen::Matrix3f axis_trans_ =
-      (Eigen::Matrix3f() << 0, 0, 1, -1, 0, 0, 0, -1, 0).finished();
+  double fx_;
+  double fy_;
+  double cx_;
+  double cy_;
+  Eigen::Matrix3d K_ = Eigen::Matrix3d::Identity();
+  Eigen::Matrix3d K_inv_ = Eigen::Matrix3d::Identity();
+  Eigen::Matrix3d axis_trans_ =
+      (Eigen::Matrix3d() << 0, 0, 1, -1, 0, 0, 0, -1, 0).finished();
   double simi_thre_;
   double valid_cloud_range_;
   double semantic_height_;

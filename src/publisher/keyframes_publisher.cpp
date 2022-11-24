@@ -34,7 +34,7 @@ void KeyFramesPublisher::publish(const std::deque<KeyFrame> &kfs) {
     pose_stamped.pose.position.y = key_frame.pose(1, 3);
     pose_stamped.pose.position.z = key_frame.pose(2, 3);
 
-    Eigen::Quaternionf q = key_frame.getQuaternion();
+    Eigen::Quaterniond q = key_frame.getQuaternion();
     pose_stamped.pose.orientation.x = q.x();
     pose_stamped.pose.orientation.y = q.y();
     pose_stamped.pose.orientation.z = q.z();

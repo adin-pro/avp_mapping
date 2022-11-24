@@ -24,26 +24,26 @@ public:
   virtual bool optimize() = 0;
 
   virtual bool
-  getOptimizedPose(std::deque<Eigen::Matrix4f> &optimized_poses) = 0;
+  getOptimizedPose(std::deque<Eigen::Matrix4d> &optimized_poses) = 0;
 
   virtual int getNodeNum() = 0;
 
   virtual void setEdgeRobustKernel(std::string robust_kernel_name,
                                    double robust_kernel_size) = 0;
 
-  virtual void addSE3Node(const Eigen::Isometry3f &pose, bool need_fix) = 0;
+  virtual void addSE3Node(const Eigen::Isometry3d &pose, bool need_fix) = 0;
 
   virtual void addSE3Edge(int vertex_index1, int vertex_index2,
-                          const Eigen::Isometry3f &relative_pose,
-                          const Eigen::VectorXf noise) = 0;
+                          const Eigen::Isometry3d &relative_pose,
+                          const Eigen::VectorXd noise) = 0;
 
   virtual void addSE3PriorXYZEdge(int se3_vertex_index,
-                                  const Eigen::Vector3f &xyz,
-                                  const Eigen::VectorXf noise) = 0;
+                                  const Eigen::Vector3d &xyz,
+                                  const Eigen::VectorXd noise) = 0;
 
   virtual void addSE3PriorQuaternionEdge(int se3_vertex_index,
-                                         const Eigen::Quaternionf &quat,
-                                         Eigen::VectorXf noise) = 0;
+                                         const Eigen::Quaterniond &quat,
+                                         Eigen::VectorXd noise) = 0;
 
   virtual void setMaximumIteration(int max_iter) = 0;
 

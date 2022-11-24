@@ -54,6 +54,8 @@ public:
   Eigen::Matrix3d getOrientationMatrix();
   static bool syncData(std::deque<IMUData> &UnsyncedData,
                        std::deque<IMUData> &SyncedData, double sync_time);
+  static bool ControlDuration(std::deque<IMUData> &pose_deque,
+                              double duration);
 };
 } // namespace avp_mapping
 #endif // _IMU_DATA_H_

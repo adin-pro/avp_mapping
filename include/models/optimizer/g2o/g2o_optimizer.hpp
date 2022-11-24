@@ -25,32 +25,32 @@ public:
 
   bool optimize() override;
 
-  bool getOptimizedPose(std::deque<Eigen::Matrix4f> &optimized_pose) override;
+  bool getOptimizedPose(std::deque<Eigen::Matrix4d> &optimized_pose) override;
 
   int getNodeNum() override;
 
   void setEdgeRobustKernel(std::string robust_kernel_name,
                            double robust_kernel_size) override;
 
-  void addSE3Node(const Eigen::Isometry3f &pose, bool need_fix) override;
+  void addSE3Node(const Eigen::Isometry3d &pose, bool need_fix) override;
 
   void addSE3Edge(int vertex_index1, int vertex_index2,
-                  const Eigen::Isometry3f &relative_pose,
-                  const Eigen::VectorXf noise) override;
+                  const Eigen::Isometry3d &relative_pose,
+                  const Eigen::VectorXd noise) override;
 
-  void addSE3PriorXYZEdge(int se3_vertex_index, const Eigen::Vector3f &xyz,
-                          const Eigen::VectorXf noise) override;
+  void addSE3PriorXYZEdge(int se3_vertex_index, const Eigen::Vector3d &xyz,
+                          const Eigen::VectorXd noise) override;
 
   void addSE3PriorQuaternionEdge(int se3_vertex_index,
-                                 const Eigen::Quaternionf &quat,
-                                 Eigen::VectorXf noise) override;
+                                 const Eigen::Quaterniond &quat,
+                                 Eigen::VectorXd noise) override;
 
   void setMaximumIteration(int max_iter) override;
 
 private:
-  Eigen::MatrixXf calcSE3EdgeInfoMat(Eigen::VectorXf noise);
-  Eigen::MatrixXf calcSE3PriorQuatEdgeInfoMat(Eigen::VectorXf noise);
-  Eigen::MatrixXf calcDiagMatrix(Eigen::VectorXf noise);
+  Eigen::MatrixXd calcSE3EdgeInfoMat(Eigen::VectorXd noise);
+  Eigen::MatrixXd calcSE3PriorQuatEdgeInfoMat(Eigen::VectorXd noise);
+  Eigen::MatrixXd calcDiagMatrix(Eigen::VectorXd noise);
   void addRobustKernel(g2o::OptimizableGraph::Edge *edge,
                        const std::string &kernel_type, double kernel_size);
 

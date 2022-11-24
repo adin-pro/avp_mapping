@@ -18,10 +18,10 @@ public:
   virtual ~RegistrationInterface() = default;
   virtual bool setInputTarget(const CloudData::CLOUD_PTR &input_target) = 0;
   virtual bool scanMatch(const CloudData::CLOUD_PTR &input_source,
-                         const Eigen::Matrix4f &predict_pose,
+                         const Eigen::Matrix4d &predict_pose,
                          CloudData::CLOUD_PTR &result_cloud_ptr,
-                         Eigen::Matrix4f &result_pose) = 0;
-  virtual float getFitnessScore() = 0;
+                         Eigen::Matrix4d &result_pose) = 0;
+  virtual double getFitnessScore() = 0;
 };
 } // namespace avp_mapping
 

@@ -13,7 +13,7 @@
 
 namespace avp_mapping {
 
-FrontEnd::FrontEnd(float key_frame_dist, int local_frame_num)
+FrontEnd::FrontEnd(double key_frame_dist, int local_frame_num)
     : local_map_ptr_(new CloudData::CLOUD()),
       key_frame_distance_(key_frame_dist),
       local_frame_num_(local_frame_num) {
@@ -31,9 +31,9 @@ bool FrontEnd::initRegistration(
     const std::string &type) {
   if (type == "NDT") {
     // NDT params
-    float res = 1.0;
-    float step_size = 0.1;
-    float trans_eps = 0.01;
+    double res = 1.0;
+    double step_size = 0.1;
+    double trans_eps = 0.01;
     int max_iter = 30;
     registration_ptr =
         std::make_shared<NDTRegistration>(res, step_size, trans_eps, max_iter);
@@ -46,7 +46,7 @@ bool FrontEnd::initRegistration(
 }
 
 bool FrontEnd::initFilter(std::shared_ptr<CloudFilterInterface> &filter_ptr,
-                          const std::string &type, float leaf_size) {
+                          const std::string &type, double leaf_size) {
   if (type == "voxel_filter") {
     filter_ptr = std::make_shared<VoxelFilter>(leaf_size, leaf_size, leaf_size);
   } else if (type == "no_filter") {
@@ -58,7 +58,7 @@ bool FrontEnd::initFilter(std::shared_ptr<CloudFilterInterface> &filter_ptr,
 }
 
 bool FrontEnd::update(const CloudData &cloud_data,
-                      Eigen::Matrix4f &result_pose) {
+                      Eigen::Matrix4d &result_pose) {
   current_frame_.cloud_data.time = cloud_data.time;
   // remove Nan
   std::vector<int> indices;
@@ -69,10 +69,10 @@ bool FrontEnd::update(const CloudData &cloud_data,
   frame_filter_ptr_->filter(current_frame_.cloud_data.cloud_ptr,
                             filtered_cloud_ptr);
 
-  static Eigen::Matrix4f step_pose = Eigen::Matrix4f::Identity();
-  static Eigen::Matrix4f last_pose = init_pose_;
-  static Eigen::Matrix4f predict_pose = init_pose_;
-  static Eigen::Matrix4f last_key_frame_pose = init_pose_;
+  static Eigen::Matrix4d step_pose = Eigen::Matrix4d::Identity();
+  static Eigen::Matrix4d last_pose = init_pose_;
+  static Eigen::Matrix4d predict_pose = init_pose_;
+  static Eigen::Matrix4d last_key_frame_pose = init_pose_;
 
   // first key frame in local map deques
   if (local_map_frames_.size() == 0) {
@@ -134,7 +134,7 @@ bool FrontEnd::udpateWithNewKeyFrame(const Frame &new_key_frame) {
   return true;
 }
 
-bool FrontEnd::setInitPose(const Eigen::Matrix4f init_pose) {
+bool FrontEnd::setInitPose(const Eigen::Matrix4d init_pose) {
   init_pose_ = init_pose;
   return true;
 }

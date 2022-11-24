@@ -55,7 +55,7 @@ private:
 
   void resetParam();
 
-  bool savePose(std::ofstream &ofs, const Eigen::Matrix4f &pose);
+  bool savePose(std::ofstream &ofs, const Eigen::Matrix4d &pose);
 
   bool addNodeAndEdge(const PoseData &reliable_odom);
 
@@ -74,7 +74,7 @@ private:
   std::ofstream vidar_odom_ofs_;
   std::ofstream optimized_pose_ofs_;
 
-  float key_frame_dist_ = 2.0;
+  double key_frame_dist_ = 2.0;
 
   bool has_new_key_frame_ = false;
   bool has_new_optimized_ = false;
@@ -83,7 +83,7 @@ private:
   KeyFrame current_key_reliable_odom_;
 
   std::deque<KeyFrame> key_frames_deque_;
-  std::deque<Eigen::Matrix4f> optimized_pose_;
+  std::deque<Eigen::Matrix4d> optimized_pose_;
 
   std::shared_ptr<OptimizerInterface> optimizer_ptr_;
   

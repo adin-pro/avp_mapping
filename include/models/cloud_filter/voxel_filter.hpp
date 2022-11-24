@@ -16,13 +16,13 @@ namespace avp_mapping {
 class VoxelFilter : public CloudFilterInterface {
 public:
   VoxelFilter(const YAML::Node &node);
-  VoxelFilter(float leaf_size_x, float leaf_size_y, float leaf_size_z);
+  VoxelFilter(double leaf_size_x, double leaf_size_y, double leaf_size_z);
 
   bool filter(const CloudData::CLOUD_PTR &input_cloud_ptr,
               CloudData::CLOUD_PTR &filtered_cloud_ptr) override;
 
 private:
-  bool setFilterParam(float leaf_size_x, float leaf_size_y, float leaf_size_z);
+  bool setFilterParam(double leaf_size_x, double leaf_size_y, double leaf_size_z);
 
 private:
   pcl::VoxelGrid<CloudData::POINT> voxel_filter_;

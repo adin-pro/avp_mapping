@@ -60,7 +60,7 @@ bool VelocityData::syncData(std::deque<VelocityData> &unsyncedData,
   return true;
 }
 
-void VelocityData::transformCoordinate(Eigen::Matrix4f transform_matrix) {
+void VelocityData::transformCoordinate(Eigen::Matrix4d transform_matrix) {
   Eigen::Matrix4d matrix = transform_matrix.cast<double>();
   Eigen::Matrix3d t_R = matrix.block<3, 3>(0, 0);
   Eigen::Vector3d w(angular_velocity.x, angular_velocity.y, angular_velocity.z);

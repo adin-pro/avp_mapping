@@ -110,7 +110,7 @@ bool BackEndFlow::validData() {
 
 bool BackEndFlow::udpateBackEnd() {
   static bool odom_inited = false;
-  static Eigen::Matrix4f odom_inited_pose = Eigen::Matrix4f::Identity();
+  static Eigen::Matrix4d odom_inited_pose = Eigen::Matrix4d::Identity();
   if (!odom_inited) {
     odom_inited = true;
     odom_inited_pose = curr_reli_odom_.pose * curr_vidar_odom_.pose.inverse();

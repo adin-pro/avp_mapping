@@ -17,18 +17,18 @@ class NDTRegistration : public RegistrationInterface {
 
 public:
   NDTRegistration(const YAML::Node &node);
-  NDTRegistration(float res, float step_size, float trans_eps, int max_iter);
+  NDTRegistration(double res, double step_size, double trans_eps, int max_iter);
 
   bool setInputTarget(const CloudData::CLOUD_PTR &taget_ptr) override;
   bool scanMatch(const CloudData::CLOUD_PTR &input_source,
-                 const Eigen::Matrix4f &predict_pose,
+                 const Eigen::Matrix4d &predict_pose,
                  CloudData::CLOUD_PTR &result_cloud_ptr,
-                 Eigen::Matrix4f &result_pose) override;
+                 Eigen::Matrix4d &result_pose) override;
 
-  float getFitnessScore() override;
+  double getFitnessScore() override;
 
 private:
-  bool setRegistrationParam(float res, float step_size, float trans_eps,
+  bool setRegistrationParam(double res, double step_size, double trans_eps,
                             int max_iter);
 
 private:

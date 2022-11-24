@@ -90,18 +90,18 @@ private:
   PoseData cur_odom_;
 
   // extrinsic matrix
-  Eigen::Matrix4f base_to_camera0_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f base_to_camera1_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f base_to_camera2_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f base_to_camera3_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f base_to_camera4_ = Eigen::Matrix4f::Identity();
-  Eigen::Matrix4f base_to_camera5_ = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4d base_to_camera0_ = Eigen::Matrix4d::Identity();
+  Eigen::Matrix4d base_to_camera1_ = Eigen::Matrix4d::Identity();
+  Eigen::Matrix4d base_to_camera2_ = Eigen::Matrix4d::Identity();
+  Eigen::Matrix4d base_to_camera3_ = Eigen::Matrix4d::Identity();
+  Eigen::Matrix4d base_to_camera4_ = Eigen::Matrix4d::Identity();
+  Eigen::Matrix4d base_to_camera5_ = Eigen::Matrix4d::Identity();
 
   CameraModel camera_;
 
   double img_sync_time_ = 0.0;
 
-  float scale_ = 0.05;
+  double scale_ = 0.05;
   int image_width_ = 280;
   int image_height_ = 280;
 

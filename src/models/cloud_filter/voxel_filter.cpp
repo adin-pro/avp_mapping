@@ -12,20 +12,22 @@
 namespace avp_mapping {
 
 VoxelFilter::VoxelFilter(const YAML::Node &node) {
-  float leaf_size_x = node["leaf_size"][0].as<float>();
-  float leaf_size_y = node["leaf_size"][1].as<float>();
-  float leaf_size_z = node["leaf_size"][2].as<float>();
+  double leaf_size_x = node["leaf_size"][0].as<double>();
+  double leaf_size_y = node["leaf_size"][1].as<double>();
+  double leaf_size_z = node["leaf_size"][2].as<double>();
   setFilterParam(leaf_size_x, leaf_size_y, leaf_size_z);
 }
 
-VoxelFilter::VoxelFilter(float leaf_size_x, float leaf_size_y,
-                         float leaf_size_z) {
+VoxelFilter::VoxelFilter(double leaf_size_x, double leaf_size_y,
+                         double leaf_size_z) {
   setFilterParam(leaf_size_x, leaf_size_y, leaf_size_z);
 }
 
-bool VoxelFilter::setFilterParam(float leaf_size_x, float leaf_size_y,
-                                 float leaf_size_z) {
-  voxel_filter_.setLeafSize(leaf_size_x, leaf_size_y, leaf_size_z);
+bool VoxelFilter::setFilterParam(double leaf_size_x, double leaf_size_y,
+                                 double leaf_size_z) {
+  voxel_filter_.setLeafSize(static_cast<float>(leaf_size_x),
+                            static_cast<float>(leaf_size_y),
+                            static_cast<float>(leaf_size_z));
   LOG(INFO) << "VoxelFilter";
   LOG(INFO) << "leafsize [x,y,z]: " << leaf_size_x << " " << leaf_size_y << " "
             << leaf_size_z;

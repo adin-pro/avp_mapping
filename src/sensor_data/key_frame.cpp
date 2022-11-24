@@ -9,7 +9,7 @@
 
 namespace avp_mapping {
   Eigen::Quaterniond KeyFrame::getQuaternion() {
-    Eigen::Quaternionf q;
+    Eigen::Quaterniond q;
     q = pose.block<3,3>(0,0);
     return q;
   }

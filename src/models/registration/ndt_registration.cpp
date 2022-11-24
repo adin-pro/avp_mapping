@@ -15,23 +15,23 @@ NDTRegistration::NDTRegistration(const ::YAML::Node &node)
     : ndt_ptr_(new pcl::NormalDistributionsTransform<CloudData::POINT,
                                                      CloudData::POINT>()) {
 
-  float res = node["res"].as<float>();
-  float step_size = node["step_size"].as<float>();
-  float trans_eps = node["trans_eps"].as<float>();
+  double res = node["res"].as<double>();
+  double step_size = node["step_size"].as<double>();
+  double trans_eps = node["trans_eps"].as<double>();
   int max_iter = node["max_iter"].as<int>();
 
   setRegistrationParam(res, step_size, trans_eps, max_iter);
 }
 
-NDTRegistration::NDTRegistration(float res, float step_size, float trans_eps,
+NDTRegistration::NDTRegistration(double res, double step_size, double trans_eps,
                                  int max_iter)
     : ndt_ptr_(new pcl::NormalDistributionsTransform<CloudData::POINT,
                                                      CloudData::POINT>()) {
   setRegistrationParam(res, step_size, trans_eps, max_iter);
 }
 
-bool NDTRegistration::setRegistrationParam(float res, float step_size,
-                                           float trans_eps, int max_iter) {
+bool NDTRegistration::setRegistrationParam(double res, double step_size,
+                                           double trans_eps, int max_iter) {
   ndt_ptr_->setResolution(res);
   ndt_ptr_->setStepSize(step_size);
   ndt_ptr_->setTransformationEpsilon(trans_eps);
@@ -50,15 +50,15 @@ bool NDTRegistration::setInputTarget(const CloudData::CLOUD_PTR &input_target) {
 }
 
 bool NDTRegistration::scanMatch(const CloudData::CLOUD_PTR &input_source,
-                                const Eigen::Matrix4f &predict_pose,
+                                const Eigen::Matrix4d &predict_pose,
                                 CloudData::CLOUD_PTR &filtered_cloud_ptr,
-                                Eigen::Matrix4f &result_pose) {
+                                Eigen::Matrix4d &result_pose) {
   ndt_ptr_->setInputSource(input_source);
-  ndt_ptr_->align(*filtered_cloud_ptr, predict_pose);
-  result_pose = ndt_ptr_->getFinalTransformation();
+  ndt_ptr_->align(*filtered_cloud_ptr, predict_pose.cast<float>());
+  result_pose = ndt_ptr_->getFinalTransformation().cast<double>();
   return true;
 }
 
-float NDTRegistration::getFitnessScore() { return ndt_ptr_->getFitnessScore(); }
+double NDTRegistration::getFitnessScore() { return ndt_ptr_->getFitnessScore(); }
 
 } // namespace avp_mapping

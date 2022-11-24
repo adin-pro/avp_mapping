@@ -54,24 +54,24 @@ bool G2OGraphOptimizer::optimize() {
 }
 
 bool G2OGraphOptimizer::getOptimizedPose(
-    std::deque<Eigen::Matrix4f> &optimized_pose) {
+    std::deque<Eigen::Matrix4d> &optimized_pose) {
   optimized_pose.clear();
   int vertex_num = graph_ptr_->vertices().size();
   for (int i = 0; i < vertex_num; ++i) {
     g2o::VertexSE3 *v = dynamic_cast<g2o::VertexSE3 *>(graph_ptr_->vertex(i));
     Eigen::Isometry3d pose = v->estimate();
-    optimized_pose.push_back(pose.matrix().cast<float>());
+    optimized_pose.push_back(pose.matrix());
   }
   return true;
 }
 
 int G2OGraphOptimizer::getNodeNum() { return graph_ptr_->vertices().size(); }
 
-void G2OGraphOptimizer::addSE3Node(const Eigen::Isometry3f &pose,
+void G2OGraphOptimizer::addSE3Node(const Eigen::Isometry3d &pose,
                                    bool need_fix) {
   g2o::VertexSE3 *vertex(new g2o::VertexSE3());
   vertex->setId(graph_ptr_->vertices().size());
-  vertex->setEstimate(pose.cast<double>());
+  vertex->setEstimate(pose);
   if (need_fix) {
     vertex->setFixed(true);
   }
@@ -86,16 +86,16 @@ void G2OGraphOptimizer::setEdgeRobustKernel(std::string robust_kernel_name,
 }
 
 void G2OGraphOptimizer::addSE3Edge(int vertex_index1, int vertex_index2,
-                                   const Eigen::Isometry3f &relative_pose,
-                                   const Eigen::VectorXf noise) {
-  Eigen::MatrixXf information_matrix = calcSE3EdgeInfoMat(noise);
+                                   const Eigen::Isometry3d &relative_pose,
+                                   const Eigen::VectorXd noise) {
+  Eigen::MatrixXd information_matrix = calcSE3EdgeInfoMat(noise);
   g2o::VertexSE3 *v1 =
       dynamic_cast<g2o::VertexSE3 *>(graph_ptr_->vertex(vertex_index1));
   g2o::VertexSE3 *v2 =
       dynamic_cast<g2o::VertexSE3 *>(graph_ptr_->vertex(vertex_index2));
   g2o::EdgeSE3 *edge(new g2o::EdgeSE3);
-  edge->setMeasurement(relative_pose.cast<double>());
-  edge->setInformation(information_matrix.cast<double>());
+  edge->setMeasurement(relative_pose);
+  edge->setInformation(information_matrix);
   edge->vertices()[0] = v1;
   edge->vertices()[1] = v2;
   graph_ptr_->addEdge(edge);
@@ -104,8 +104,8 @@ void G2OGraphOptimizer::addSE3Edge(int vertex_index1, int vertex_index2,
   }
 }
 
-Eigen::MatrixXf G2OGraphOptimizer::calcSE3EdgeInfoMat(Eigen::VectorXf noise) {
-  Eigen::MatrixXf information_mat = Eigen::MatrixXf::Identity(6, 6);
+Eigen::MatrixXd G2OGraphOptimizer::calcSE3EdgeInfoMat(Eigen::VectorXd noise) {
+  Eigen::MatrixXd information_mat = Eigen::MatrixXd::Identity(6, 6);
   information_mat = calcDiagMatrix(noise);
   return information_mat;
 }
@@ -123,30 +123,30 @@ void G2OGraphOptimizer::addRobustKernel(g2o::OptimizableGraph::Edge * edge, cons
   edge->setRobustKernel(kernel);
 }
 
-Eigen::MatrixXf G2OGraphOptimizer::calcDiagMatrix(Eigen::VectorXf noise) {
-  Eigen::MatrixXf infomration_mat = Eigen::MatrixXf::Identity(noise.rows(), noise.rows());
+Eigen::MatrixXd G2OGraphOptimizer::calcDiagMatrix(Eigen::VectorXd noise) {
+  Eigen::MatrixXd infomration_mat = Eigen::MatrixXd::Identity(noise.rows(), noise.rows());
   for (int i = 0; i < noise.rows(); ++i) {
     infomration_mat(i, i) /= noise(i);
   }
   return infomration_mat;
 }
 
-void G2OGraphOptimizer::addSE3PriorXYZEdge(int se3_vertex_index, const Eigen::Vector3f &xyz, Eigen::VectorXf noise) {
-  Eigen::MatrixXf info_mat = calcDiagMatrix(noise);
+void G2OGraphOptimizer::addSE3PriorXYZEdge(int se3_vertex_index, const Eigen::Vector3d &xyz, Eigen::VectorXd noise) {
+  Eigen::MatrixXd info_mat = calcDiagMatrix(noise);
   g2o::VertexSE3* v_se3 = dynamic_cast<g2o::VertexSE3*> (graph_ptr_->vertex(se3_vertex_index));
   g2o::EdgeSE3PriorXYZ * edge(new g2o::EdgeSE3PriorXYZ());
-  edge->setMeasurement(xyz.cast<double>());
-  edge->setInformation(info_mat.cast<double>());
+  edge->setMeasurement(xyz);
+  edge->setInformation(info_mat);
   edge->vertices()[0] = v_se3;
   graph_ptr_->addEdge(edge);
 }
 
-void G2OGraphOptimizer::addSE3PriorQuaternionEdge(int se3_vetex_index, const Eigen::Quaternionf & quat, Eigen::VectorXf noise) {
-  Eigen::MatrixXf info_mat = calcDiagMatrix(noise);
+void G2OGraphOptimizer::addSE3PriorQuaternionEdge(int se3_vetex_index, const Eigen::Quaterniond & quat, Eigen::VectorXd noise) {
+  Eigen::MatrixXd info_mat = calcDiagMatrix(noise);
   g2o::VertexSE3 * v_se3 = dynamic_cast<g2o::VertexSE3*> (graph_ptr_->vertex(se3_vetex_index));
   g2o::EdgeSE3PriorQuat * edge(new g2o::EdgeSE3PriorQuat());
-  edge->setMeasurement(quat.cast<double>());
-  edge->setInformation(info_mat.cast<double>());
+  edge->setMeasurement(quat);
+  edge->setInformation(info_mat);
   edge->vertices()[0] = v_se3;
   graph_ptr_->addEdge(edge);
 }

@@ -33,8 +33,8 @@ bool LoopClosing::initParam(const YAML::Node &node) {
   extend_frame_num_ = node["extend_frame_num"].as<int>();
   loop_step_ = node["loop_step"].as<int>();
   diff_num_ = node["diff_num"].as<int>();
-  detect_area_ = node["detect_area"].as<float>();
-  fitness_score_limit_ = node["fitness_score_limit"].as<float>();
+  detect_area_ = node["detect_area"].as<double>();
+  fitness_score_limit_ = node["fitness_score_limit"].as<double>();
   return true;
 }
 
@@ -97,8 +97,8 @@ bool LoopClosing::detectNearestKeyFrame(int &key_frame_index) {
     return false;
 
   int key_num = static_cast<int>(all_key_reli_odoms_.size());
-  float min_distance = 100000.0;
-  float distance = 0.0;
+  double min_distance = 100000.0;
+  double distance = 0.0;
 
   KeyFrame history_key_frame;
   KeyFrame current_key_frame = all_key_reli_odoms_.back();
@@ -136,15 +136,15 @@ bool LoopClosing::detectNearestKeyFrame(int &key_frame_index) {
 bool LoopClosing::cloudRegistration(int key_frame_index) {
   // multi frame joint
   CloudData::CLOUD_PTR map_cloud_ptr(new CloudData::CLOUD());
-  Eigen::Matrix4f map_pose = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4d map_pose = Eigen::Matrix4d::Identity();
   jointMap(key_frame_index, map_cloud_ptr, map_pose);
   // scan joint
   CloudData::CLOUD_PTR scan_cloud_ptr(new CloudData::CLOUD());
-  Eigen::Matrix4f scan_pose = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4d scan_pose = Eigen::Matrix4d::Identity();
   jointScan(scan_cloud_ptr, scan_pose);
 
   // registration
-  Eigen::Matrix4f result_pose = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4d result_pose = Eigen::Matrix4d::Identity();
   registration(map_cloud_ptr, scan_cloud_ptr, scan_pose, result_pose);
 
   if (registration_ptr_->getFitnessScore() > fitness_score_limit_) {
@@ -165,11 +165,11 @@ bool LoopClosing::cloudRegistration(int key_frame_index) {
 
 bool LoopClosing::jointMap(int key_frame_index,
                            CloudData::CLOUD_PTR &map_cloud_ptr,
-                           Eigen::Matrix4f &map_pose) {
+                           Eigen::Matrix4d &map_pose) {
   map_pose = all_key_reli_odoms_.at(key_frame_index).pose;
   curr_loop_pose_.index0 = all_key_frames_.at(key_frame_index).index;
 
-  Eigen::Matrix4f pose_to_reli_odom =
+  Eigen::Matrix4d pose_to_reli_odom =
       map_pose * all_key_frames_.at(key_frame_index).pose.inverse();
 
   for (int i = key_frame_index - extend_frame_num_;
@@ -180,7 +180,7 @@ bool LoopClosing::jointMap(int key_frame_index,
     CloudData::CLOUD_PTR cloud_ptr(new CloudData::CLOUD());
     pcl::io::loadPCDFile(file_path, *cloud_ptr);
 
-    Eigen::Matrix4f cloud_pose = pose_to_reli_odom * all_key_frames_.at(i).pose;
+    Eigen::Matrix4d cloud_pose = pose_to_reli_odom * all_key_frames_.at(i).pose;
     pcl::transformPointCloud(*cloud_ptr, *cloud_ptr, cloud_pose);
     *map_cloud_ptr += *cloud_ptr;
   }
@@ -189,7 +189,7 @@ bool LoopClosing::jointMap(int key_frame_index,
 }
 
 bool LoopClosing::jointScan(CloudData::CLOUD_PTR &scan_cloud_ptr,
-                            Eigen::Matrix4f &scan_pose) {
+                            Eigen::Matrix4d &scan_pose) {
   scan_pose = all_key_reli_odoms_.back().pose;
   curr_loop_pose_.index1 = all_key_reli_odoms_.back().index;
   curr_loop_pose_.time = all_key_reli_odoms_.back().time;
@@ -203,8 +203,8 @@ bool LoopClosing::jointScan(CloudData::CLOUD_PTR &scan_cloud_ptr,
 
 bool LoopClosing::registration(CloudData::CLOUD_PTR &map_cloud_ptr,
                                CloudData::CLOUD_PTR &scan_cloud_ptr,
-                               Eigen::Matrix4f &scan_pose,
-                               Eigen::Matrix4f &result_pose) {
+                               Eigen::Matrix4d &scan_pose,
+                               Eigen::Matrix4d &result_pose) {
   CloudData::CLOUD_PTR result_cloud_ptr(new CloudData::CLOUD());
   registration_ptr_->setInputTarget(map_cloud_ptr);
   registration_ptr_->scanMatch(scan_cloud_ptr, scan_pose, result_cloud_ptr,

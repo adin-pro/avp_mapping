@@ -27,7 +27,7 @@ bool BackEnd::initWithConfig(std::string &work_dir) {
 }
 
 bool BackEnd::initParam(const YAML::Node &config_node) {
-  key_frame_dist_ = config_node["key_frame_distance"].as<float>();
+  key_frame_dist_ = config_node["key_frame_distance"].as<double>();
   return true;
 }
 
@@ -103,10 +103,10 @@ bool BackEnd::insertLoopPose(const LoopPose &loop_pose) {
     return false;
   }
 
-  Eigen::Isometry3f isom;
+  Eigen::Isometry3d isom;
   isom.matrix() = loop_pose.pose;
   optimizer_ptr_->addSE3Edge(loop_pose.index0, loop_pose.index1, isom,
-                             graph_optimizer_config_.close_loop_noise.cast<float>());
+                             graph_optimizer_config_.close_loop_noise);
   loop_pose_cnt_++;
   return true;
 }
@@ -116,7 +116,7 @@ void BackEnd::resetParam() {
   has_new_optimized_ = false;
 }
 
-bool BackEnd::savePose(std::ofstream &ofs, const Eigen::Matrix4f &pose) {
+bool BackEnd::savePose(std::ofstream &ofs, const Eigen::Matrix4d &pose) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 4; ++j) {
       ofs << pose(i, j);
@@ -133,7 +133,7 @@ bool BackEnd::savePose(std::ofstream &ofs, const Eigen::Matrix4f &pose) {
 bool BackEnd::needNewKeyFrame(const CloudData &cloud_data,
                               const PoseData &vidar_odom,
                               const PoseData &reliable_odom) {
-  static Eigen::Matrix4f last_key_pose = vidar_odom.pose;
+  static Eigen::Matrix4d last_key_pose = vidar_odom.pose;
   if (key_frames_deque_.size() == 0) {
     has_new_key_frame_ = true;
     last_key_pose = vidar_odom.pose;
@@ -169,7 +169,7 @@ bool BackEnd::needNewKeyFrame(const CloudData &cloud_data,
 
 bool BackEnd::addNodeAndEdge(const PoseData &reliable_odom) {
 
-  Eigen::Isometry3f isom;
+  Eigen::Isometry3d isom;
   isom.matrix() = reliable_odom.pose;
   if (!graph_optimizer_config_.use_reliable_odom &&
       optimizer_ptr_->getNodeNum() == 0) {
@@ -184,19 +184,19 @@ bool BackEnd::addNodeAndEdge(const PoseData &reliable_odom) {
   static KeyFrame last_key_frame = current_key_frame_;
   int node_num = optimizer_ptr_->getNodeNum();
   if (node_num > 1) {
-    Eigen::Matrix4f relative_pose =
+    Eigen::Matrix4d relative_pose =
         last_key_frame.pose.inverse() * current_key_frame_.pose;
     isom.matrix() = relative_pose;
     optimizer_ptr_->addSE3Edge(node_num - 2, node_num - 1, isom,
-                               graph_optimizer_config_.vidar_odom_edge_noise.cast<float>());
+                               graph_optimizer_config_.vidar_odom_edge_noise);
   }
 
   // reliable odom edge as prior information
   if (graph_optimizer_config_.use_reliable_odom) {
-    Eigen::Vector3f xyz(reliable_odom.pose(0, 3), reliable_odom.pose(1, 3),
+    Eigen::Vector3d xyz(reliable_odom.pose(0, 3), reliable_odom.pose(1, 3),
                         reliable_odom.pose(2, 3));
     optimizer_ptr_->addSE3PriorXYZEdge(
-        node_num - 1, xyz, graph_optimizer_config_.reliable_odom_noise.cast<float>());
+        node_num - 1, xyz, graph_optimizer_config_.reliable_odom_noise);
     reliable_odom_cnt_++;
   }
 

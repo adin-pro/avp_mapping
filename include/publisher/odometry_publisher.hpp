@@ -23,13 +23,13 @@ public:
 
   OdometryPublisher() = default;
 
-  void publish(const Eigen::Matrix4f &transform_matrix, double time);
-  void publish(const Eigen::Matrix4f &transform_matrix);
+  void publish(const Eigen::Matrix4d &transform_matrix, double time);
+  void publish(const Eigen::Matrix4d &transform_matrix);
 
   bool hasSubscribers();
 
 private:
-  void publishData(const Eigen::Matrix4f &transform_matrix, ros::Time time);
+  void publishData(const Eigen::Matrix4d &transform_matrix, ros::Time time);
 
 private:
   ros::NodeHandle nh_;

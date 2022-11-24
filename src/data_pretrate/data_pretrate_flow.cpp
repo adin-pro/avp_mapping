@@ -25,7 +25,7 @@ DataPretreatFlow::DataPretreatFlow(ros::NodeHandle &nh, std::string work_dir) {
       node["cloud_with_heigth_pub_topic"].as<std::string>();
 
   // bev_image
-  scale_ = node["image_scale"].as<float>();
+  scale_ = node["image_scale"].as<double>();
   image_height_ = node["image_height"].as<int>();
   image_width_ = node["image_width"].as<int>();
 

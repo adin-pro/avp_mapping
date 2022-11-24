@@ -14,7 +14,7 @@
 namespace avp_mapping {
 class PoseData {
 public:
-  Eigen::Matrix4d pose = Eigen::Matrix4f::Identity();
+  Eigen::Matrix4d pose = Eigen::Matrix4d::Identity();
   double time = 0.0;
 
 public:
