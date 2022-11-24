@@ -1,0 +1,28 @@
+# topics
+# subscribers
+cloud_sub_topic: /bev/rgb_cloud
+cloud_height_sub_topic: /bev/rgb_cloud_height
+image_sub_topic: /bev/image
+odom_sub_topic: /odom
+imu_sub_topic: /imu
+# publishers
+kf_cloud_pub_topic: /kf_cloud
+kf_cloud_height_pub_topic: /kf_cloud_height
+kf_image_pub_topic: /kf_image
+kf_pub_topic: /kf
+odom_pub_topic: /front_end_odom
+frame_id: /map
+odom_pub_parent_frame: /base_link
+odom_pub_child_frame: /map
+
+# options for saving keyframs
+save_kf: true
+kf_save_path: "/home/adin/extra/slam_data"
+
+# data buffer
+control_duration: 20
+
+# kfs
+sub_frame_dist: 0.5
+key_frame_dist: 2.0
+
