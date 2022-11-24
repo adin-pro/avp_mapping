@@ -68,7 +68,6 @@ FrontEndFlow::FrontEndFlow(ros::NodeHandle &nh, const std::string &work_dir) {
   kf_cloud_save_path_ = kf_save_path + "/kf_cloud/";
   kf_cloud_height_save_path_ = kf_save_path + "/kf_cloud_height/";
   kf_image_save_path_ = kf_save_path + "/kf_image/";
-  kf_pose_fd_.open(kf_save_path + "/kf_poses.txt");
 
   FileManager::CreateDirectory(kf_save_path);
 
@@ -77,6 +76,12 @@ FrontEndFlow::FrontEndFlow(ros::NodeHandle &nh, const std::string &work_dir) {
   FileManager::CreateDirectory(kf_cloud_height_save_path_);
 
   FileManager::CreateDirectory(kf_image_save_path_);
+  
+  kf_pose_fd_.open(kf_save_path + "/kf_poses.txt", std::ios::out);
+
+  // add yaw scale
+  add_scale_ = config_node["add_scale"].as<bool>();
+  yaw_scale_ = config_node["yaw_scale"].as<double>();
 }
 
 bool FrontEndFlow::run() {
@@ -144,7 +149,32 @@ bool FrontEndFlow::validData() {
 
 bool FrontEndFlow::updateOdometry() {
   // use odom as current pose
-  curr_frame_pose_ = curr_odom_data_;
+  // TODO replace it with encoder-imu fusion odometry
+  static bool inited = false;
+  if (!inited) {
+    inited = true;
+    last_odom_data_ = curr_odom_data_;
+    curr_frame_pose_ = curr_odom_data_;
+    last_frame_pose_ = curr_odom_data_;
+    return true;
+  }
+  curr_frame_pose_.time = curr_odom_data_.time;
+  Eigen::Matrix4d delta_odom =
+      last_odom_data_.pose.inverse() * curr_odom_data_.pose;
+  // add yaw scale
+  if (add_scale_) {
+    Eigen::Vector3d euler_angles =
+        delta_odom.block<3, 3>(0, 0).eulerAngles(0, 1, 2);
+    delta_odom.block<3, 3>(0, 0) =
+        (Eigen::AngleAxisd(euler_angles.x(), Eigen::Vector3d::UnitX()) *
+         Eigen::AngleAxisd(euler_angles.y(), Eigen::Vector3d::UnitY()) *
+         Eigen::AngleAxisd(euler_angles.z() * yaw_scale_,
+                           Eigen::Vector3d::UnitZ()))
+            .toRotationMatrix();
+  }
+  curr_frame_pose_.pose = last_frame_pose_.pose * delta_odom;
+  last_odom_data_ = curr_odom_data_;
+  last_frame_pose_ = curr_frame_pose_;
   return true;
 }
 

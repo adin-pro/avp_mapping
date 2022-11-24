@@ -10,8 +10,8 @@
 #include "mapping/front_end/front_end.hpp"
 #include "publisher/cloud_publisher.hpp"
 #include "publisher/image_publisher.hpp"
-#include "publisher/odometry_publisher.hpp"
 #include "publisher/key_frame_publisher.hpp"
+#include "publisher/odometry_publisher.hpp"
 #include "subscriber/cloud_subscriber.hpp"
 #include "subscriber/image_subscriber.hpp"
 #include "subscriber/imu_subscriber.hpp"
@@ -59,10 +59,15 @@ private:
   CloudData curr_cloud_height_data_;
   ImageData curr_image_data_;
   PoseData curr_odom_data_;
+  PoseData last_odom_data_;
   IMUData curr_imu_data_;
   // frame poses
+  PoseData last_frame_pose_;
   PoseData curr_frame_pose_;
   PoseData last_kf_pose_;
+  // add scale
+  bool add_scale_ = false;
+  double yaw_scale_ = 1.000;
 
   bool save_kf_ = false;
   int kf_id_ = -1;
