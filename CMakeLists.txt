@@ -34,6 +34,7 @@ include(cmake/PCL.cmake)
 include(cmake/eigen.cmake)
 include(cmake/g2o.cmake)
 include(cmake/opencv.cmake)
+include(cmake/ceres.cmake)
 
 
 catkin_package()
