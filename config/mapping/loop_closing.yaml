@@ -9,8 +9,8 @@ save_loop_pose: true
 save_dir: "/home/adin/extra/slam_data"
 
 #semantic loop pose
-loop_pose_step: 5
-start_up_index: 60
+loop_pose_step: 3
+start_up_index: 80
 index_exclude_range: 10
 coarse_candidates: 10
 #           background lane_line parking_line marker crossing vehicle bump stop_line
@@ -22,6 +22,6 @@ fine_similarity_limit: 5.0
 
 # icp
 max_iteration: 20
-fitness_upper_bound: 2.0
+fitness_upper_bound: 1.0
 
 

@@ -71,8 +71,6 @@ bool LoopClosingFlow::validData() {
                               curr_image_data_);
   KeyFrame::getKFDataByTS(key_frame_buff_, curr_cloud_height_data_.time,
                           curr_key_frame_);
-  LOG(INFO) << "Cloud timestamp: " << curr_cloud_height_data_.time;
-  LOG(INFO) << "Image timestamp: " << curr_image_data_.time;
   LOG(INFO) << "Received KF " << curr_key_frame_.time << " "
             << curr_key_frame_.index << " x " << curr_key_frame_.pose(0, 3)
             << " y " << curr_key_frame_.pose(1, 3);

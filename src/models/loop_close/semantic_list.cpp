@@ -236,7 +236,7 @@ Eigen::Matrix4d SemanticList::getTransformation(SemanticList &sListA,
   LOG(INFO) << "Affine3d Matrix";
   Eigen::Affine3d TAB =
       SemanticList::Find3DAffineTransform(pointsA, pointsB, true);
-  std::cout << TAB.matrix() << TAB.linear().eulerAngles(0, 1, 2) << std::endl;
+  std::cout << TAB.matrix() << std::endl;
   return TAB.matrix();
 }
 

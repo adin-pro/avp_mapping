@@ -51,7 +51,6 @@ bool SemanticLoopClosing::TryGetLoopPose(const ImageData &image_data,
 
   SemanticList queryList = CreateSListFromImage(image_data, kf);
   InsertSList(queryList, cloud_height);
-  LOG(INFO) << "sList database size " << sList_database_.size();
   if (queryList.id_ < start_up_index_) {
     return false;
   }
@@ -164,6 +163,7 @@ SemanticLoopClosing::CreateSListFromImage(const ImageData &image_data,
   slist.addSemanticNode(crossing_rot_vec, AVPLabels::CROSSING);
   slist.addSemanticNode(bumper_rot_vec, AVPLabels::BUMP);
   slist.addSemanticNode(stop_line_rot_vec, AVPLabels::STOP_LINE);
+  slist.procNodes(); // calc distance
   return slist;
 }
 
@@ -194,7 +194,7 @@ bool SemanticLoopClosing::FindBestMatch(const SemanticList &query,
   int best_ind = -1;
   double best_fine_similarity = 0.0;
   // fine similarity
-  for (int candidate_ind = 0; candidate_ind < coarse_similarities.size() &&
+  for (int candidate_ind = 0; candidate_ind < static_cast<int>(coarse_similarities.size()) &&
                               candidates_num < coarse_candidates_;
        ++candidate_ind) {
     if (abs(query.id_ - sList_database_[ind_arg[candidate_ind]].id_) <
@@ -230,8 +230,9 @@ bool SemanticLoopClosing::CalcRelativePoseToTarget(
             guess_pose.cast<float>());
   if (icp.hasConverged() && icp.getFitnessScore() < fitness_upper_bound_) {
     trans_src_to_tar = icp.getFinalTransformation().cast<double>();
-    LOG(INFO) << " ICP fitness " << icp.getFitnessScore();
+    LOG(INFO) << "Success ICP fitness " << icp.getFitnessScore();
   } else {
+    LOG(INFO) << "Failed ICP fitness " << icp.getFitnessScore();
     return false;
   }
 
