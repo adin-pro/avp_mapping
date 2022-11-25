@@ -35,6 +35,7 @@ include(cmake/eigen.cmake)
 include(cmake/g2o.cmake)
 include(cmake/opencv.cmake)
 
+
 catkin_package()
 
 include_directories(include ${catkin_INCLUDE_DIRS})

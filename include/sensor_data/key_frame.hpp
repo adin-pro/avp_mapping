@@ -9,6 +9,7 @@
 #define _KEY_FRAME_H_
 
 #include <Eigen/Dense>
+#include <deque>
 
 namespace avp_mapping {
 class KeyFrame {
@@ -19,6 +20,8 @@ public:
 
 public:
   Eigen::Quaterniond getQuaternion();
+  static bool getKFDataByTS(std::deque<KeyFrame> &data_deque, double timestamp,
+                      KeyFrame &result);
 };
 } // namespace avp_mapping
 

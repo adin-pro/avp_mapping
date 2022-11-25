@@ -24,6 +24,9 @@ public:
   static bool controlDuration(std::deque<CloudData> &cloud_deque,
                               double duration);
   // CloudData(const CloudData& obj);
+  static bool getCloudDataByTS(std::deque<CloudData> &data_deque, double timestamp,
+                        CloudData &result);
+
 public:
   double time = 0.0;
   CLOUD_PTR cloud_ptr;
