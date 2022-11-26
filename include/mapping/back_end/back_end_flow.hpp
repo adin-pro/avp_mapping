@@ -45,6 +45,7 @@ private:
 
   std::deque<KeyFrame> key_frame_buff_;
   std::deque<LoopPose> loop_pose_buff_;
+  std::deque<KeyFrame> optimized_kfs_;
 
   LoopPose curr_loop_pose_;
   KeyFrame curr_key_frame_;

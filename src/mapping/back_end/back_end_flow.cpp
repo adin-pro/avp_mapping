@@ -88,13 +88,18 @@ bool BackEndFlow::MaybeInsertKFOdometry() {
 
   while (key_frame_buff_.size() > 0) {
     curr_key_frame_ = key_frame_buff_.front();
-    pgo_back_end_ptr_->AddPose(curr_key_frame_);
+    KeyFrame last_optimized_kf = optimized_kfs_.back();
+    // odom from last to current
+    Eigen::Matrix4d T_be =
+        curr_key_frame_.pose.inverse() * last_key_frame_.pose;
+    // optimized pose
+    KeyFrame optimized_curr_kf = curr_key_frame_;
+    optimized_curr_kf.pose = last_optimized_kf.pose * T_be.inverse();
+    pgo_back_end_ptr_->AddPose(optimized_curr_kf);
     LOG(INFO) << "Add Pose " << curr_key_frame_.index << "  (x,y) "
               << "(" << curr_key_frame_.pose(0, 3) << ", "
               << curr_key_frame_.pose(1, 3) << ")";
-    // from last to current
-    Eigen::Matrix4d T_be =
-        curr_key_frame_.pose.inverse() * last_key_frame_.pose;
+
     pgo_back_end_ptr_->AddConstraint(curr_key_frame_.index,
                                      last_key_frame_.index, T_be, odom_info_);
     LOG(INFO) << "Add Odometry Constraint " << last_key_frame_.index
@@ -107,9 +112,8 @@ bool BackEndFlow::MaybeInsertKFOdometry() {
 }
 
 bool BackEndFlow::publishData() {
-  std::deque<KeyFrame> kfs;
-  pgo_back_end_ptr_->GetOptimizedPoses(kfs);
-  key_frames_pub_ptr_->publish(kfs);
+  pgo_back_end_ptr_->GetOptimizedPoses(optimized_kfs_);
+  key_frames_pub_ptr_->publish(optimized_kfs_);
   return true;
 }
 

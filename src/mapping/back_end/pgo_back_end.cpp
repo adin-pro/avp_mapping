@@ -2,7 +2,7 @@
  * @Author: ding.yin
  * @Date: 2022-11-25 14:34:48
  * @Last Modified by: ding.yin
- * @Last Modified time: 2022-11-25 16:39:43
+ * @Last Modified time: 2022-11-25 18:08:52
  */
 
 #include "mapping/back_end/pgo_back_end.hpp"
@@ -216,14 +216,17 @@ void PGOBackEnd::AddConstraint(int index_begin, int index_end,
 
 void PGOBackEnd::GetOptimizedPoses(std::deque<KeyFrame> &kfs) {
   kfs.clear();
-  for (auto &pa : poses_) {
+  // LOG(INFO) << "Get optimized poses";
+  for (size_t i = 0; i < poses_.size(); ++i) {
+    auto& pa = poses_[i];
     KeyFrame keyframe;
-    keyframe.time = pa.second.time;
-    keyframe.index = pa.first;
-    keyframe.pose(0, 3) = pa.second.p.x();
-    keyframe.pose(1, 3) = pa.second.p.y();
-    keyframe.pose(2, 3) = pa.second.p.z();
-    keyframe.pose.block<3, 3>(0, 0) = pa.second.q.toRotationMatrix();
+    keyframe.time = pa.time;
+    keyframe.index = i;
+    keyframe.pose(0, 3) = pa.p.x();
+    keyframe.pose(1, 3) = pa.p.y();
+    keyframe.pose(2, 3) = pa.p.z();
+    keyframe.pose.block<3, 3>(0, 0) = pa.q.toRotationMatrix();
+    // std::cout << keyframe.pose << std::endl;
     kfs.emplace_back(keyframe);
   }
 }

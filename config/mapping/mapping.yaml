@@ -1,0 +1,11 @@
+#topics
+kf_cloud_sub_topic: /kf_cloud
+back_end_kfs_sub_topic: /back_end_kfs
+front_end_kf_sub_topic: /kf
+optimized_cloud_map_pub_topic: /map
+original_cloud_map_pub_topic: /origin_map
+frame_id: /map
+
+#save
+save_map: true
+save_dir: /home/adin/extra/slam_data/

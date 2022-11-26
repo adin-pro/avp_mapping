@@ -32,9 +32,9 @@ void KeyFramesSubscriber::msg_callback(
     kf.pose(2, 3) = key_frames_msg_ptr->poses.at(i).pose.position.z;
     Eigen::Quaterniond q;
     q.x() = key_frames_msg_ptr->poses.at(i).pose.orientation.x;
-    q.y() = key_frames_msg_ptr->poses.at(i).pose.orientation.x;
-    q.z() = key_frames_msg_ptr->poses.at(i).pose.orientation.x;
-    q.w() = key_frames_msg_ptr->poses.at(i).pose.orientation.x;
+    q.y() = key_frames_msg_ptr->poses.at(i).pose.orientation.y;
+    q.z() = key_frames_msg_ptr->poses.at(i).pose.orientation.z;
+    q.w() = key_frames_msg_ptr->poses.at(i).pose.orientation.w;
 
     kf.pose.block<3, 3>(0, 0) = q.matrix();
     latest_deque_key_frames_.push_back(kf);
