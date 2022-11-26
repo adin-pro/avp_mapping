@@ -4,7 +4,6 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /map_cloud1
         - /TF1/Frames1
       Splitter Ratio: 0.5
     Tree Height: 570
@@ -26,7 +25,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: camera0
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -157,7 +156,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.05000000074505806
+      Size (m): 0.019999999552965164
       Style: Flat Squares
       Topic: /origin_map
       Unreliable: false
@@ -253,34 +252,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        base_footprint:
-          Value: true
-        base_link:
-          Value: true
-        camera0_link:
-          Value: true
-        camera1_link:
-          Value: true
-        camera2_link:
-          Value: true
-        camera3_link:
-          Value: true
-        camera4_link:
-          Value: true
-        camera5_link:
-          Value: true
-        front_caster_link:
-          Value: true
-        odom:
-          Value: true
-        wheel_left_link:
-          Value: true
-        wheel_right_link:
-          Value: true
-        xMark_link:
-          Value: true
-        yMark_link:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -483,9 +454,9 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 11.847116470336914
-        Y: 16.187320709228516
-        Z: -24.787574768066406
+        X: -5.180756568908691
+        Y: 23.828840255737305
+        Z: -24.75522232055664
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -494,7 +465,7 @@ Visualization Manager:
       Pitch: 1.5647963285446167
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.7085957527160645
+      Yaw: 4.583595275878906
     Saved: ~
 Window Geometry:
   Displays:

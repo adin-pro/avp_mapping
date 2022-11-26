@@ -1,23 +1,32 @@
-## AVP_MAPPING
+# AVP_MAPPING
 
 A mapping system for autonomous valet parking(AVP).
 
-Developing [-----> 20 % -----------------------]
+Developing [--------> 40 % ---------------]
 
-- [ ] Simulation
+- [x] Simulation
   - [x] static world
   - [ ] dynamic agents 
-- [ ] Data pretreatment
+- [x] Data pretreatment
   - [x] vidar point cloud
   - [x] bev image
+  - [ ] NN based Semantic segmentation
   - [ ] occupied grid for submap
-- [ ] Front End
-- [ ] Back End
-- [ ] Loop Closing
-- [ ] Mapping & Visualization 
+- [x] Front End
+  - [x] Odom with scale rate
+  - [ ] IMU & Encoder Fusion
+- [x] Back End
+  - [x] 3D PGO using ceres
+  - [ ] 3D PGO using g2o
+- [x] Loop Closing
+  - [x] Object based loop closing
+- [x] Mapping & Visualization 
+  - [x] Cloud map
+  - [ ] Grid map
+  - [ ] Vector map
 
 
-### Quick Start
+## Quick Start
 
 **Clone and build**
  
@@ -39,6 +48,8 @@ tar -zxvf parklot.tar.gz;
 cp -r parklot/ .gazebo/models/
 ```
 
+###  Online Mode
+
 **Launch Simulation world and rviz**
 
 replace `word_dir`  in `avp_mapping/config/global_config.yaml` with your own path
@@ -54,22 +65,48 @@ roslaunch avp_mapping robot_control.launch
 rosrun avp_mapping avp_data_pretreat_node
 ```
 
+**Launch Mapping Nodes**
+
+```shell
+roslaunch avp_mapping online_mapping.launch
+```
+
 ![alt text](pics/online_simulation.png "rviz")
 
 
-**Mapping With GroundTruth Odom**
 
-replace `save_path`  in `avp_mapping/config/mapping/auxiliary.yaml` with your own path
+###  Offline Mode [Recommended]
+
+Use rosbag to record data, and then use offline mode for more efficient program development
 
 ```shell
-rosrun avp_mapping avp_auxiliary_node
+roslaunch avp_mapping offline_mode.launch
 ```
 
-![alt text](pics/gt_map.png "gt map")
+
+## Result
+
+**Loop Closing**
+
+![alt text](pics/looppose.gif "loop close")
 
 
+**Trajs after Pose Graph Optimization**
 
-Acknowlegement:
+![alt text](pics/pgo.png "pgo")
+
+**Mapping**
+
+Before Optimization
+
+![alt text](pics/before_opt.png "before opt")
+
+After Optimization
+![alt text](pics/after_opt.png "after opt")
+
+----
+
+## Acknowlegement:
 
 1. Code FrameWork https://github.com/Little-Potato-1990/localization_in_auto_driving
 2. Gazebo simulation environment https://github.com/TurtleZhong/AVP-SLAM-SIM
