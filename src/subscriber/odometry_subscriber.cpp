@@ -20,6 +20,15 @@ void OdometrySubscriber::msg_callback(
     const nav_msgs::OdometryConstPtr &odom_msg_ptr) {
   std::unique_lock<std::mutex> ulock(buff_mutex_);
   PoseData pose_data;
+
+  pose_data.velo.time = odom_msg_ptr->header.stamp.toSec();
+  pose_data.velo.linear_velocity.x = odom_msg_ptr->twist.twist.linear.x;
+  pose_data.velo.linear_velocity.y = odom_msg_ptr->twist.twist.linear.y;
+  pose_data.velo.linear_velocity.z = odom_msg_ptr->twist.twist.linear.z;
+  pose_data.velo.angular_velocity.x = odom_msg_ptr->twist.twist.angular.x;
+  pose_data.velo.angular_velocity.y = odom_msg_ptr->twist.twist.angular.y;
+  pose_data.velo.angular_velocity.z = odom_msg_ptr->twist.twist.angular.z;
+
   pose_data.time = odom_msg_ptr->header.stamp.toSec();
   pose_data.pose(0, 3) = odom_msg_ptr->pose.pose.position.x;
   pose_data.pose(1, 3) = odom_msg_ptr->pose.pose.position.y;

@@ -21,3 +21,5 @@ camera_model:
 
 voxel_filter:
   leaf_size: [0.1, 0.1, 0.1]
+
+shutdown_log: true

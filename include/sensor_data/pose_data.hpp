@@ -11,11 +11,14 @@
 #include <Eigen/Dense>
 #include <deque>
 
+#include "sensor_data/velocity_data.hpp"
+
 namespace avp_mapping {
 class PoseData {
 public:
   Eigen::Matrix4d pose = Eigen::Matrix4d::Identity();
   double time = 0.0;
+  VelocityData velo;
 
 public:
   Eigen::Quaterniond getQuaternion();

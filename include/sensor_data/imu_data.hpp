@@ -12,6 +12,8 @@
 #include <cmath>
 #include <deque>
 
+#include "glog/logging.h"
+
 namespace avp_mapping {
 class IMUData {
 public:
@@ -54,8 +56,9 @@ public:
   Eigen::Matrix3d getOrientationMatrix();
   static bool syncData(std::deque<IMUData> &UnsyncedData,
                        std::deque<IMUData> &SyncedData, double sync_time);
-  static bool ControlDuration(std::deque<IMUData> &pose_deque,
-                              double duration);
+  static bool ControlDuration(std::deque<IMUData> &pose_deque, double duration);
+  static bool getIMUDataByTS(std::deque<IMUData> &pose_deque, double timestamp,
+                              IMUData &result);
 };
 } // namespace avp_mapping
 #endif // _IMU_DATA_H_

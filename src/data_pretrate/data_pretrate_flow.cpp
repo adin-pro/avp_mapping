@@ -74,6 +74,10 @@ DataPretreatFlow::DataPretreatFlow(ros::NodeHandle &nh, std::string work_dir) {
   bev_cloud_ptr_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
   bev_cloud_with_height_out_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
   filtered_bev_cloud_ptr_ = CloudData::CLOUD_PTR(new CloudData::CLOUD());
+
+  if (node["shutdown_log"].as<bool>()) {
+    google::ShutdownGoogleLogging();
+  }
 }
 
 bool DataPretreatFlow::run() {

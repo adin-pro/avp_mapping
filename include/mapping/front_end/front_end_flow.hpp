@@ -68,8 +68,11 @@ private:
   // add scale
   bool add_scale_ = false;
   double yaw_scale_ = 1.000;
+  double imu_noise_ = 0.01;
+  double imu_bias_ = 0.01;
 
   bool save_kf_ = false;
+  bool use_imu_wheel_odom_ = false;
   int kf_id_ = -1;
   double kf_sync_time_ = 0.0;
   double key_frame_dist_ = 2.0;
@@ -79,6 +82,7 @@ private:
   std::string kf_cloud_height_save_path_ = "";
   std::string kf_image_save_path_ = "";
   std::ofstream kf_pose_fd_;
+  std::ofstream odom_imu_out_;
 };
 
 } // namespace avp_mapping
