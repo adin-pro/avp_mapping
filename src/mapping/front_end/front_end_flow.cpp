@@ -94,6 +94,7 @@ FrontEndFlow::FrontEndFlow(ros::NodeHandle &nh, const std::string &work_dir) {
   }
 
   odom_imu_out_.open(kf_save_path + "/odom_imu.txt", std::ios::out);
+  odom_gt_out_.open(kf_save_path + "/gt_odom.txt", std::ios::out);
 }
 
 bool FrontEndFlow::run() {
@@ -176,6 +177,10 @@ bool FrontEndFlow::updateOdometry() {
   // use odom as current pose
   // TODO replace it with encoder-imu fusion odometry
   static bool inited = false;
+  odom_gt_out_ << curr_odom_data_.time << " " << curr_odom_data_.pose(0, 3)
+               << " " << curr_odom_data_.pose(1, 3) << " "
+               << curr_odom_data_.pose(2, 3) << std::endl;
+  odom_gt_out_.flush();
   if (!inited) {
     inited = true;
     last_odom_data_ = curr_odom_data_;

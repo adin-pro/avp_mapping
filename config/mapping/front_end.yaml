@@ -28,10 +28,10 @@ key_frame_dist: 2.0
 
 #add noise
 add_scale: true
-yaw_scale: 1.0001 # 1e-5%
+yaw_scale: 1.00001 # 1e-5%
 
 #odom
-use_imu_wheel_odom: true
+use_imu_wheel_odom: false
 imu_noise: 0.01
 imu_bias: 0.005
 

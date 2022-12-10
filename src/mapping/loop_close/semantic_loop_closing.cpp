@@ -230,6 +230,8 @@ bool SemanticLoopClosing::CalcRelativePoseToTarget(
             guess_pose.cast<float>());
   if (icp.hasConverged() && icp.getFitnessScore() < fitness_upper_bound_) {
     trans_src_to_tar = icp.getFinalTransformation().cast<double>();
+    if (fabs(trans_src_to_tar(2, 3)) > 0.1)
+      return false;
     LOG(INFO) << "Success ICP fitness " << icp.getFitnessScore();
   } else {
     LOG(INFO) << "Failed ICP fitness " << icp.getFitnessScore();

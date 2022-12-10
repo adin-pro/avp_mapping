@@ -21,7 +21,8 @@ enum AVPLabels {
   CROSSING = 5,
   VEHICLE = 6,
   BUMP = 7,
-  STOP_LINE = 8
+  STOP_LINE = 8,
+  DASH_LINE = 9
 };
 
 extern std::vector<Eigen::Vector3d> AVPColors;

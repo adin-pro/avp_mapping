@@ -17,6 +17,7 @@ std::vector<Eigen::Vector3d> AVPColors{
     Eigen::Vector3d(79, 255, 255),      // CROSSING
     Eigen::Vector3d(0, 0, 0),      // VEHICLE
     Eigen::Vector3d(168, 66, 0), // BUMP
-    Eigen::Vector3d(20, 150, 60) // STOP_LINE
+    Eigen::Vector3d(20, 150, 60), // STOP_LINE
+    Eigen::Vector3d(222, 45, 60) // DASH_LINE
 };
 }

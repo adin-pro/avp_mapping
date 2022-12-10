@@ -83,6 +83,7 @@ private:
   std::string kf_image_save_path_ = "";
   std::ofstream kf_pose_fd_;
   std::ofstream odom_imu_out_;
+  std::ofstream odom_gt_out_;
 };
 
 } // namespace avp_mapping

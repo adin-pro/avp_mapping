@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="world_name" value="$(find avp_mapping)/simulation/world/parklot.world"/>
+    <arg name="world_name" value="$(find avp_mapping)/simulation/world/dahuo-parklot.world"/>
     <arg name="paused" default="false"/>
     <arg name="use_sim_time" default="true"/>
     <arg name="gui" default="false"/>
